@@ -11,14 +11,16 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
     const [offeredCourses, setOfferedCourses] = useState(allOfferedCourses);
 
     function handleSearch(ev: React.ChangeEvent<HTMLInputElement>) {
-        const search = ev.target.value.toLowerCase();
-        const filteredCourses = allOfferedCourses.filter(course =>
-            search.length === 0 ||
-            course.courseId.toLowerCase().indexOf(search) != -1 ||
-            course.courseName.toLowerCase().indexOf(search) != -1 ||
-            course.facualtyName.toLowerCase().indexOf(search) != -1
-        );
-        setOfferedCourses(filteredCourses);
+        setTimeout(() => {
+            const search = ev.target.value.toLowerCase();
+            const filteredCourses = allOfferedCourses.filter(course =>
+                search.length === 0 ||
+                course.courseId.toLowerCase().indexOf(search) != -1 ||
+                course.courseName.toLowerCase().indexOf(search) != -1 ||
+                course.facualtyName.toLowerCase().indexOf(search) != -1
+            );
+            setOfferedCourses(filteredCourses);
+        }, 200);
     }
 
     useEffect(() => {
