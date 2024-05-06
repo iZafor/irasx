@@ -24,3 +24,16 @@ export async function getGrades(id: string, authToken: string) {
         }
     );
 }
+
+export async function getOfferedCourses(id: string, authToken: string) {
+    return fetch(
+        `https://iras.iub.edu.bd:8079//api/v1/registration/${id}/all-offer-courses`,
+        {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${authToken}`,
+                "Content-Type": "application/json"
+            }
+        }
+    )
+}

@@ -41,3 +41,34 @@ export interface GradesResponse {
     data: SemesterResult[];
     total: number;
 }
+
+export interface OfferedCourse {
+    capacity: number;
+    catalogId: string;
+    catalogTypeId: string;
+    coOfferCourseId: string;
+    concentrationId: string;
+    courseCategoryId: string;
+    courseCode: string;
+    courseGroupId: string;
+    courseId: string;
+    courseName: string;
+    creditHour: number;
+    enrolled: number;
+    facualtyName: string;
+    gp: number;
+    grade: string;
+    isMandatoryFail: number;
+    monTimeString: string;
+    programId: number;
+    regSemester: string;
+    regYear: string;
+    roomCapacity: number;
+    section: number;
+    seqNo: string;
+    status: number;
+    timeSlot: string;
+    timeString: string;
+    vacancy: number;
+    wedTimeString: string;
+}
