@@ -1,8 +1,9 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import { ModeToggle } from "./components/mode-toggle"
-import Login from "./login";
-import { validateStoredAuthData } from "./lib/utils";
-import { redirect } from "react-router-dom";
+import Login from "./login"
+import { validateStoredAuthData } from "./lib/utils"
+import { redirect } from "react-router-dom"
+import Dashboard from "./dashboard"
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
       }
       return null;
     }
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />
   },
 ]);
 
