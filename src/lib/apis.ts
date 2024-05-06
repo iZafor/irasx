@@ -1,4 +1,4 @@
-import { AuthData } from "./definition";
+import { AuthData } from "./definition"
 
 export async function login(data: AuthData) {
     return fetch(
@@ -10,4 +10,17 @@ export async function login(data: AuthData) {
             },
             body: JSON.stringify(data)
         });
+}
+
+export async function getGrades(id: string, authToken: string) {
+    return fetch(
+        `https://iras.iub.edu.bd:8079//api/v1/registration/student-registered-courses/${id}/all`,
+        {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${authToken}`,
+                "Content-Type": "application/json"
+            }
+        }
+    );
 }

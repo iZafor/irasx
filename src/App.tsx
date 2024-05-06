@@ -1,9 +1,9 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
-import { ModeToggle } from "./components/mode-toggle"
-import Login from "./login"
-import { validateStoredAuthData } from "./lib/utils"
-import { redirect } from "react-router-dom"
-import Dashboard from "./dashboard"
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { ModeToggle } from "./components/mode-toggle";
+import Login from "./login";
+import { validateStoredAuthData } from "./lib/utils";
+import { redirect } from "react-router-dom";
+import Dashboard from "./dashboard";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +18,13 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard />
+    element: <Dashboard />,
+    loader: async () => {
+      if (!validateStoredAuthData()) {
+        return redirect("/");
+      }
+      return null;
+    }
   },
 ]);
 
