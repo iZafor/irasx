@@ -1,29 +1,38 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardTitle } from "./components/ui/card"
-import { Input } from "./components/ui/input"
-import { login } from "./lib/apis"
-import { AuthResponse, StoredAuthData } from "./lib/definition"
-import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "./components/ui/card";
+import { Input } from "./components/ui/input";
+import { login } from "./lib/apis";
+import { AuthResponse, StoredAuthData } from "./lib/definition";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Login() {
     const navigate = useNavigate();
+    const [showInvalid, setShowInvalid] = useState(false);
 
     async function handleLogin(ev: React.FormEvent<HTMLFormElement>) {
         ev.preventDefault();
-        const formData = new FormData(ev.currentTarget);
-        const res: AuthResponse = await login(
-            {
-                email: formData.get("uid")?.toString() || "",
-                password: formData.get("password")?.toString() || ""
-            })
-            .then(res => res.json())
-            .catch(err => err);
-        const data: StoredAuthData = {
-            id: formData.get("uid")?.toString() || "",
-            data: res
-        };
-        localStorage.setItem("authData", JSON.stringify(data));
-        navigate("/dashboard");
+        try {
+            const formData = new FormData(ev.currentTarget);
+            const res: AuthResponse = await login(
+                {
+                    email: formData.get("uid")?.toString() || "",
+                    password: formData.get("password")?.toString() || ""
+                })
+                .then(res => res.json());
+            if (res.message !== "Success") {
+                setShowInvalid(true);
+                return;
+            }
+            const data: StoredAuthData = {
+                id: formData.get("uid")?.toString() || "",
+                data: res
+            };
+            localStorage.setItem("authData", JSON.stringify(data));
+            navigate("/dashboard");
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -35,6 +44,9 @@ export default function Login() {
                         <Input className="text-base" name="uid" placeholder="ID" required />
                         <Input className="text-base" type="password" name="password" placeholder="Password" required />
                         <Button className="text-base" type="submit">Login</Button>
+                        {showInvalid &&
+                            <p className="text-red-500">Invalid credentials!</p>
+                        }
                     </form>
                 </CardContent>
             </Card>
