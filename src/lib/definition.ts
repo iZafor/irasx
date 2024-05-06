@@ -72,3 +72,12 @@ export interface OfferedCourse {
     vacancy: number;
     wedTimeString: string;
 }
+
+export interface PreRequisiteCourse {
+    courseId: string;
+    courseName: string;
+    grade?: string;
+    gradePoint: number;
+    groupId: number;
+    preReqCourseId: string;
+}

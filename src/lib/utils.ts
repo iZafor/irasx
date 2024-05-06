@@ -86,3 +86,10 @@ export function mapSemester(semester: string) {
       return "";
   }
 }
+
+export function arrayOfSize(size: number) {
+  const res = [];
+  res[size - 1] = 0;
+  res.fill(0);
+  return res;
+}

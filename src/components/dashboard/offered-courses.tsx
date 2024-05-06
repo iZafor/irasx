@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import OfferedCourseTable from "./offered-course-table";
 import { OfferedCourse } from "@/lib/definition";
+import TableSkeleton from "./table-skeleton";
 
 const allOfferedCourses: OfferedCourse[] = [];
 
 export default function OfferedCourses({ id, authToken }: { id: string; authToken: string }) {
     const [offeredCourses, setOfferedCourses] = useState(allOfferedCourses);
+    const [isLoading, setIsLoading] = useState(true);
 
     function handleSearch(ev: React.ChangeEvent<HTMLInputElement>) {
         setTimeout(() => {
@@ -25,14 +27,11 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
 
     useEffect(() => {
         async function fetchOfferedCourses() {
-            try {
-                const courses = await getOfferedCourses(id, authToken).then(res => res.json());
-                setOfferedCourses(courses.data.eligibleOfferCourses);
-                allOfferedCourses.length = 0;
-                allOfferedCourses.push(...courses.data.eligibleOfferCourses);
-            } catch (error) {
-                console.error(error);
-            }
+            const courses = await getOfferedCourses(id, authToken);
+            setOfferedCourses(courses);
+            allOfferedCourses.length = 0;
+            allOfferedCourses.push(...courses);
+            setIsLoading(false);
         }
         fetchOfferedCourses();
     }, [id, authToken]);
@@ -42,11 +41,16 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
             <div className="flex p-4 pb-0 justify-end mb-4">
                 <Input className="w-30" placeholder="Search here..." onChange={handleSearch} />
             </div>
-            <ScrollArea className="h-[30rem]">
-                <div className="p-4">
-                    <OfferedCourseTable offeredCourses={offeredCourses} />
-                </div>
-            </ScrollArea>
+            {
+                !isLoading ?
+                    <ScrollArea className="h-[30rem]">
+                        <div className="p-4">
+                            <OfferedCourseTable offeredCourses={offeredCourses} />
+                        </div>
+                    </ScrollArea>
+                    :
+                    <TableSkeleton />
+            }
         </div>
     );
 }
