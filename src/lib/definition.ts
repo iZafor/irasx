@@ -92,3 +92,14 @@ export interface PreRequisiteMap {
         }[]
     }
 }
+
+export interface CatalogueCourse {
+    catalogId: string;
+    catalogName: string;
+    courseId: string;
+    courseName: string;
+    createHour: string;
+    courseGroupName: string;
+    courseNatureName: string;
+    courseTypeId: string;
+}

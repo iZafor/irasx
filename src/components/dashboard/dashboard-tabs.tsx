@@ -15,16 +15,19 @@ export default function DashboardTabs() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    function setParam(value: string) {
+    function navigateTo(tab: string, catalogue?: string) {
         const newParams = new URLSearchParams(params);
-        newParams.set("tab", value);
+        newParams.set("tab", tab);
+        if (catalogue) {
+            newParams.set("catalogue", "all");
+        }
         const newPath = `${location.pathname}?${newParams.toString()}`;
         navigate(newPath);
     }
 
     useEffect(() => {
         if (!query) {
-            setParam("grades");
+            navigateTo("grades");
         }
     }, []);
 
@@ -32,8 +35,8 @@ export default function DashboardTabs() {
         <>
             <Tabs defaultValue={query || "grades"} className="w-[70rem]">
                 <TabsList className="mb-4">
-                    <TabsTrigger value="grades" onClick={() => setParam("grades")}>Grades</TabsTrigger>
-                    <TabsTrigger value="courses" onClick={() => setParam("courses")}>Offered Courses</TabsTrigger>
+                    <TabsTrigger value="grades" onClick={() => navigateTo("grades")}>Grades</TabsTrigger>
+                    <TabsTrigger value="courses" onClick={() => navigateTo("courses")}>Offered Courses</TabsTrigger>
                 </TabsList>
             </Tabs>
             {
