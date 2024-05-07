@@ -1,133 +1,153 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { StoredAuthData, Result, SemesterOrder, SemesterResult, STORED_AUTH_DATA_KEY, PreRequisiteCourse, PreRequisiteMap, RequirementCatalogue, RequirementCatalogueMap } from "./definition"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import {
+    StoredAuthData,
+    Result,
+    SemesterOrder,
+    SemesterResult,
+    STORED_AUTH_DATA_KEY,
+    PreRequisiteCourse,
+    PreRequisiteMap,
+    RequirementCatalogue,
+    RequirementCatalogueMap,
+} from "./definition";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+    return twMerge(clsx(inputs));
 }
 
 export function validateStoredAuthData() {
-  const data: string | null = localStorage.getItem(STORED_AUTH_DATA_KEY);
-  if (data === null) {
-    return false;
-  }
-  const authData: StoredAuthData = JSON.parse(data);
-  const res = Date.parse(
-    authData.data.data?.[0]?.["expires"] || (new Date()).toUTCString()) > Date.now();
-  return res;
+    const data: string | null = localStorage.getItem(STORED_AUTH_DATA_KEY);
+    if (data === null) {
+        return false;
+    }
+    const authData: StoredAuthData = JSON.parse(data);
+    const res =
+        Date.parse(
+            authData.data.data?.[0]?.["expires"] || new Date().toUTCString()
+        ) > Date.now();
+    return res;
 }
 
 export function getStoredAuthData(): StoredAuthData {
-  return JSON.parse(localStorage.getItem(STORED_AUTH_DATA_KEY) || "{}")
+    return JSON.parse(localStorage.getItem(STORED_AUTH_DATA_KEY) || "{}");
 }
 
 export function transformIntoResult(arr: SemesterResult[]) {
-  const tempResult: Result = { keys: [] };
-  for (let i = 0; i < arr.length; i++) {
-    const year = Number(arr[i].regYear);
-    const sem = Number(arr[i].regSemester);
-    if (!tempResult[year]) {
-      tempResult.keys.push(year);
-      tempResult[year] = { keys: [] };
-    }
+    const tempResult: Result = { keys: [] };
+    for (let i = 0; i < arr.length; i++) {
+        const year = Number(arr[i].regYear);
+        const sem = Number(arr[i].regSemester);
+        if (!tempResult[year]) {
+            tempResult.keys.push(year);
+            tempResult[year] = { keys: [] };
+        }
 
-    if (!tempResult[year][sem]) {
-      if (tempResult[year].keys.find(s => s === sem) === undefined) {
-        tempResult[year].keys.push(sem);
-      }
-      tempResult[year][sem] = [arr[i]];
-    } else {
-      tempResult[year][sem].push(arr[i]);
+        if (!tempResult[year][sem]) {
+            if (tempResult[year].keys.find((s) => s === sem) === undefined) {
+                tempResult[year].keys.push(sem);
+            }
+            tempResult[year][sem] = [arr[i]];
+        } else {
+            tempResult[year][sem].push(arr[i]);
+        }
     }
-  }
-  tempResult.keys.sort((a, b) => a - b);
-  tempResult.keys.forEach(key => {
-    tempResult[key].keys.sort((a, b) => SemesterOrder[a - 1] - SemesterOrder[b - 1]);
-  });
-  return tempResult;
+    tempResult.keys.sort((a, b) => a - b);
+    tempResult.keys.forEach((key) => {
+        tempResult[key].keys.sort(
+            (a, b) => SemesterOrder[a - 1] - SemesterOrder[b - 1]
+        );
+    });
+    return tempResult;
 }
 
 export function transformIntoPreRequisiteMap(arr: PreRequisiteCourse[]) {
-  const res: PreRequisiteMap = {};
-  for (const course of arr) {
-    if (!res[course.courseId]) {
-      res[course.courseId] = {
-        preRequisites: [
-          { courseId: course.preReqCourseId, status: course.gradePoint ? "complete" : "incomplete" }
-        ]
-      };
-    } else {
-      res[course.courseId].preRequisites.push({
-        courseId: course.preReqCourseId, status: course.gradePoint ? "complete" : "incomplete"
-      });
+    const res: PreRequisiteMap = {};
+    for (const course of arr) {
+        if (!res[course.courseId]) {
+            res[course.courseId] = {
+                preRequisites: [
+                    {
+                        courseId: course.preReqCourseId,
+                        status: course.gradePoint ? "complete" : "incomplete",
+                    },
+                ],
+            };
+        } else {
+            res[course.courseId].preRequisites.push({
+                courseId: course.preReqCourseId,
+                status: course.gradePoint ? "complete" : "incomplete",
+            });
+        }
     }
-  }
 
-  return res;
+    return res;
 }
 
-export function transformIntoRequirementCatalogueMap(arr: RequirementCatalogue[]) {
-  const res: RequirementCatalogueMap = {};
-  for (const catalogue of arr) {
-    const entry = res[catalogue.courseGroupName];
-    if (!entry) {
-      res[catalogue.courseGroupName] = {
-        minRequirement: Number(catalogue.minRequirment),
-        maxRequirement: Number(catalogue.maxRequirment),
-        doneCredit: Number(catalogue.doneCredit),
-      };
-    } else {
-      entry.minRequirement += Number(catalogue.minRequirment);
-      entry.maxRequirement += Number(catalogue.maxRequirment);
-      entry.doneCredit += Number(catalogue.doneCredit);
+export function transformIntoRequirementCatalogueMap(
+    arr: RequirementCatalogue[]
+) {
+    const res: RequirementCatalogueMap = {};
+    for (const catalogue of arr) {
+        const entry = res[catalogue.courseGroupName];
+        if (!entry) {
+            res[catalogue.courseGroupName] = {
+                minRequirement: Number(catalogue.minRequirment),
+                maxRequirement: Number(catalogue.maxRequirment),
+                doneCredit: Number(catalogue.doneCredit),
+            };
+        } else {
+            entry.minRequirement += Number(catalogue.minRequirment);
+            entry.maxRequirement += Number(catalogue.maxRequirment);
+            entry.doneCredit += Number(catalogue.doneCredit);
+        }
     }
-  }
-  return res;
+    return res;
 }
 
 export function mapGradePoint(grade: string) {
-  switch (grade) {
-    case "A":
-      return 4.0;
-    case "A-":
-      return 3.7;
-    case "B+":
-      return 3.3;
-    case "B":
-      return 3.0;
-    case "B-":
-      return 2.7;
-    case "C+":
-      return 2.3;
-    case "C":
-      return 2.0;
-    case "C-":
-      return 1.7;
-    case "D+":
-      return 1.3;
-    case "D":
-      return 1.0;
-    default:
-      return 0.0;
-  }
+    switch (grade) {
+        case "A":
+            return 4.0;
+        case "A-":
+            return 3.7;
+        case "B+":
+            return 3.3;
+        case "B":
+            return 3.0;
+        case "B-":
+            return 2.7;
+        case "C+":
+            return 2.3;
+        case "C":
+            return 2.0;
+        case "C-":
+            return 1.7;
+        case "D+":
+            return 1.3;
+        case "D":
+            return 1.0;
+        default:
+            return 0.0;
+    }
 }
 
 export function mapSemester(semester: string) {
-  switch (semester) {
-    case "1":
-      return "Winter"
-    case "2":
-      return "Spring"
-    case "3":
-      return "Summer"
-    default:
-      return "";
-  }
+    switch (semester) {
+        case "1":
+            return "Winter";
+        case "2":
+            return "Spring";
+        case "3":
+            return "Summer";
+        default:
+            return "";
+    }
 }
 
 export function arrayOfSize(size: number) {
-  const res = [];
-  res[size - 1] = 0;
-  res.fill(0);
-  return res;
+    const res = [];
+    res[size - 1] = 0;
+    res.fill(0);
+    return res;
 }
