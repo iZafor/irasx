@@ -83,3 +83,12 @@ export interface PreRequisiteCourse {
     groupId: number;
     preReqCourseId: string;
 }
+
+export interface PreRequisiteMap {
+    [key: string]: {
+        preRequisites: {
+            courseId: string;
+            status: "complete" | "incomplete";
+        }[]
+    }
+}

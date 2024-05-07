@@ -1,5 +1,5 @@
-import { AuthData } from "./definition";
-import { OfferedCourse, PreRequisiteCourse } from "./definition";
+import { AuthData, OfferedCourse, PreRequisiteCourse } from "./definition";
+import { transformIntoPreRequisiteMap } from "./utils";
 
 export async function login(data: AuthData) {
     return fetch(
@@ -57,9 +57,9 @@ export async function getPreRequisiteCourses(id: string, authToken: string) {
                 }
             }
         ).then(res => res.json());
-        return res.data;
+        return transformIntoPreRequisiteMap(res.data);
     } catch (error) {
         console.error(error);
     }
-    return [];
+    return {};
 }

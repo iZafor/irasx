@@ -6,20 +6,22 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { OfferedCourse } from "@/lib/definition";
+import { OfferedCourse, PreRequisiteMap } from "@/lib/definition";
 
-export default function OfferedCourseTable({ offeredCourses }: { offeredCourses: OfferedCourse[] }) {
+export default function OfferedCourseTable(
+    { offeredCourses, preRequisiteMap }: { offeredCourses: OfferedCourse[]; preRequisiteMap: PreRequisiteMap }) {
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Course ID</TableHead>
-                    <TableHead>Course Name</TableHead>
-                    <TableHead>Section</TableHead>
-                    <TableHead>Enrolled</TableHead>
-                    <TableHead>Vacancy</TableHead>
-                    <TableHead>Time Slot</TableHead>
-                    <TableHead>Faculty</TableHead>
+                    <TableHead className="w-[5rem]">Course ID</TableHead>
+                    <TableHead className="w-[18rem]">Course Name</TableHead>
+                    <TableHead className="w-[5rem]">Section</TableHead>
+                    <TableHead className="w-[5rem]">Enrolled</TableHead>
+                    <TableHead className="w-[5rem]">Vacancy</TableHead>
+                    <TableHead className="w-[8rem]">Time Slot</TableHead>
+                    <TableHead className="w-[15rem]">Faculty</TableHead>
+                    <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -33,10 +35,30 @@ export default function OfferedCourseTable({ offeredCourses }: { offeredCourses:
                             <TableCell>{row.vacancy}</TableCell>
                             <TableCell>{row.timeSlot}</TableCell>
                             <TableCell>{row.facualtyName}</TableCell>
+                            <TableCell>
+                                <PreRequisites courseId={row.courseId} preRequisiteMap={preRequisiteMap} />
+                            </TableCell>
                         </TableRow>
                     ))
                 }
             </TableBody>
         </Table>
+    );
+}
+
+function PreRequisites({ courseId, preRequisiteMap }: { courseId: string; preRequisiteMap: PreRequisiteMap }) {
+    const reqs = preRequisiteMap[courseId]?.preRequisites;
+    if (!reqs) {
+        return <></>
+    }
+
+    return (
+        <div className="space-y-2">
+            {
+                reqs.map(course => (
+                    <p key={courseId + course.courseId} className={`rounded p-2 text-center ${course.status === "complete" ? "bg-green-600" : "bg-red-600"}`}>{course.courseId}</p>
+                ))
+            }
+        </div>
     );
 }

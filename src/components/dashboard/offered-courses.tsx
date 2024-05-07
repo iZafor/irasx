@@ -1,4 +1,4 @@
-import { getOfferedCourses } from "@/lib/apis";
+import { getOfferedCourses, getPreRequisiteCourses } from "@/lib/apis";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
@@ -10,6 +10,7 @@ const allOfferedCourses: OfferedCourse[] = [];
 
 export default function OfferedCourses({ id, authToken }: { id: string; authToken: string }) {
     const [offeredCourses, setOfferedCourses] = useState(allOfferedCourses);
+    const [preRequisiteMap, setPrerequisiteMap] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
     function handleSearch(ev: React.ChangeEvent<HTMLInputElement>) {
@@ -27,10 +28,14 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
 
     useEffect(() => {
         async function fetchOfferedCourses() {
-            const courses = await getOfferedCourses(id, authToken);
+            const [courses, reqMap] = await Promise.all(
+                [getOfferedCourses(id, authToken),
+                getPreRequisiteCourses(id, authToken)]
+            );
             setOfferedCourses(courses);
             allOfferedCourses.length = 0;
             allOfferedCourses.push(...courses);
+            setPrerequisiteMap(reqMap);
             setIsLoading(false);
         }
         fetchOfferedCourses();
@@ -45,7 +50,7 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                 !isLoading ?
                     <ScrollArea className="h-[30rem]">
                         <div className="p-4">
-                            <OfferedCourseTable offeredCourses={offeredCourses} />
+                            <OfferedCourseTable offeredCourses={offeredCourses} preRequisiteMap={preRequisiteMap} />
                         </div>
                     </ScrollArea>
                     :

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { StoredAuthData, Result, SemesterOrder, SemesterResult, STORED_AUTH_DATA_KEY } from "./definition"
+import { StoredAuthData, Result, SemesterOrder, SemesterResult, STORED_AUTH_DATA_KEY, PreRequisiteCourse, PreRequisiteMap } from "./definition"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -45,6 +45,26 @@ export function transformIntoResult(arr: SemesterResult[]) {
     tempResult[key].keys.sort((a, b) => SemesterOrder[a - 1] - SemesterOrder[b - 1]);
   });
   return tempResult;
+}
+
+export function transformIntoPreRequisiteMap(arr: PreRequisiteCourse[]) {
+  const res: PreRequisiteMap = {};
+  for (const course of arr) {
+    if (!res[course.courseId]) {
+      res[course.courseId] = {
+        preRequisites: [
+          { courseId: course.preReqCourseId, status: course.gradePoint ? "complete" : "incomplete" }
+        ]
+      };
+    } else {
+      res[course.courseId].preRequisites.push({
+        courseId: course.preReqCourseId, status: course.gradePoint ? "complete" : "incomplete"
+      });
+    }
+  }
+  console.log(res);
+
+  return res;
 }
 
 export function mapGradePoint(grade: string) {
