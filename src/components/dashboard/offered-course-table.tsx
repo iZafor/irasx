@@ -56,7 +56,7 @@ function PreRequisites({ courseId, preRequisiteMap }: { courseId: string; preReq
         <div className="space-y-2">
             {
                 reqs.map(course => (
-                    <p key={courseId + course.courseId} className={`rounded p-2 text-center ${course.status === "complete" ? "bg-green-600" : "bg-red-600"}`}>{course.courseId}</p>
+                    <p key={courseId + course.courseId} className={`rounded p-2 text-center text-white ${course.status === "complete" ? "bg-green-600" : "bg-red-600"}`}>{course.courseId}</p>
                 ))
             }
         </div>
