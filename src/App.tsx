@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     }
   },
   {
-    path: "/dashboard",
+    path: "/dashboard/*",
     element: <Dashboard />,
     loader: async () => {
       if (!validateStoredAuthData()) {

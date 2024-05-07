@@ -30,7 +30,7 @@ export default function Login() {
                 data: res
             };
             localStorage.setItem(STORED_AUTH_DATA_KEY, JSON.stringify(data));
-            navigate("/dashboard");
+            navigate("/dashboard/?tab=grades");
         } catch (error) {
             console.error(error);
         }

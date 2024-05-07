@@ -62,7 +62,6 @@ export function transformIntoPreRequisiteMap(arr: PreRequisiteCourse[]) {
       });
     }
   }
-  console.log(res);
 
   return res;
 }
