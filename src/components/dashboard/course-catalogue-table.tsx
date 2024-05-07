@@ -1,8 +1,8 @@
-import { CatalogueCourse, PreRequisiteMap } from "@/lib/definition";
+import { CourseCatalogue, PreRequisiteMap } from "@/lib/definition";
 import { Table, TableHeader, TableHead, TableBody, TableCell, TableRow } from "../ui/table";
 
 interface CatalogueTableProps {
-    courseCatalogue: CatalogueCourse[];
+    courseCatalogue: CourseCatalogue[];
     preRequisiteMap: PreRequisiteMap;
 }
 

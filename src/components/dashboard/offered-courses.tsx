@@ -3,14 +3,14 @@ import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import OfferedCourseTable from "./offered-course-table";
-import { OfferedCourse, CatalogueCourse } from "@/lib/definition";
+import { OfferedCourse, CourseCatalogue } from "@/lib/definition";
 import TableSkeleton from "./table-skeleton";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import CatalogueTable from "./course-catalogue-table";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const allOfferedCourses: OfferedCourse[] = [];
-const allCourseCatalogue: CatalogueCourse[] = [];
+const allCourseCatalogue: CourseCatalogue[] = [];
 
 export default function OfferedCourses({ id, authToken }: { id: string; authToken: string }) {
     const [offeredCourses, setOfferedCourses] = useState(allOfferedCourses);

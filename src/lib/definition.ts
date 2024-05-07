@@ -93,7 +93,7 @@ export interface PreRequisiteMap {
     }
 }
 
-export interface CatalogueCourse {
+export interface CourseCatalogue {
     catalogId: string;
     catalogName: string;
     courseId: string;
