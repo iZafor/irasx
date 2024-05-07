@@ -1,13 +1,13 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { StoredAuthData, Result, SemesterOrder, SemesterResult } from "./definition"
+import { StoredAuthData, Result, SemesterOrder, SemesterResult, STORED_AUTH_DATA_KEY } from "./definition"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
 export function validateStoredAuthData() {
-  const data: string | null = localStorage.getItem("authData");
+  const data: string | null = localStorage.getItem(STORED_AUTH_DATA_KEY);
   if (data === null) {
     return false;
   }
@@ -18,7 +18,7 @@ export function validateStoredAuthData() {
 }
 
 export function getStoredAuthData(): StoredAuthData {
-  return JSON.parse(localStorage.getItem("authData") || "{}")
+  return JSON.parse(localStorage.getItem(STORED_AUTH_DATA_KEY) || "{}")
 }
 
 export function transformIntoResult(arr: SemesterResult[]) {

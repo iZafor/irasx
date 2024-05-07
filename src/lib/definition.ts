@@ -8,6 +8,8 @@ export interface AuthResponse {
     data?: { [key: string]: string; }[];
 }
 
+export const STORED_AUTH_DATA_KEY = "userAuth";
+
 export interface StoredAuthData {
     id: string;
     data: AuthResponse;
