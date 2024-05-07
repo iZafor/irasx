@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import CatalogueTable from "./course-catalogue-table";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { transformIntoRequirementCatalogueMap } from "@/lib/utils";
+import CatalogueCreditCount from "./catalogue-credit-count";
 
 const allOfferedCourses: OfferedCourse[] = [];
 const allFoundationCourseCatalogue: CourseCatalogue[] = [];
@@ -143,6 +144,10 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                 </Tabs>
                 <Input className="w-30" placeholder="Search here..." onChange={handleSearch} />
             </div>
+            <CatalogueCreditCount
+                catalogue={catalogue || "none"}
+                requirementCatalogueMap={requirementCatalogueMap}
+            />
             {
                 !isLoading ?
                     <ScrollArea className="h-[30rem]">
@@ -152,31 +157,24 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                                     <OfferedCourseTable
                                         offeredCourses={offeredCourses}
                                         preRequisiteMap={preRequisiteMap}
-                                        requirementCatalogueMap={requirementCatalogueMap}
                                     />
                                     :
                                     (
                                         catalogue === "Foundation" ?
                                             <CatalogueTable
-                                                catalogue={catalogue || "Foundation"}
                                                 courseCatalogue={foundationCourseCatalogue}
                                                 preRequisiteMap={preRequisiteMap}
-                                                requirementCatalogueMap={requirementCatalogueMap}
                                             />
                                             : (
                                                 catalogue === "Major" ?
                                                     <CatalogueTable
-                                                        catalogue={catalogue || "Major"}
                                                         courseCatalogue={majorCourseCatalogue}
                                                         preRequisiteMap={preRequisiteMap}
-                                                        requirementCatalogueMap={requirementCatalogueMap}
                                                     />
                                                     :
                                                     <CatalogueTable
-                                                        catalogue={catalogue || "Minor"}
                                                         courseCatalogue={minorCourseCatalogue}
                                                         preRequisiteMap={preRequisiteMap}
-                                                        requirementCatalogueMap={requirementCatalogueMap}
                                                     />
                                             )
                                     )
