@@ -28,21 +28,20 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
     function handleSearch(ev: React.ChangeEvent<HTMLInputElement>) {
         setTimeout(() => {
             const search = ev.target.value.toLowerCase();
-            const filteredCourses = catalogue === "all" ? allOfferedCourses.filter(course =>
-                search.length === 0 ||
-                course.courseId.toLowerCase().indexOf(search) != -1 ||
-                course.courseName.toLowerCase().indexOf(search) != -1 ||
-                course.facualtyName.toLowerCase().indexOf(search) != -1
-            ) : allCourseCatalogue.filter(course =>
-                search.length === 0 ||
-                course.courseId.toLowerCase().indexOf(search) != -1 ||
-                course.courseName.toLowerCase().indexOf(search) != -1
-            );
 
             if (catalogue === "all") {
-                setOfferedCourses(filteredCourses);
+                setOfferedCourses(allOfferedCourses.filter(course =>
+                    search.length === 0 ||
+                    course.courseId.toLowerCase().indexOf(search) != -1 ||
+                    course.courseName.toLowerCase().indexOf(search) != -1 ||
+                    course.facualtyName.toLowerCase().indexOf(search) != -1
+                ));
             } else {
-                setCourseCatalogue(filteredCourses);
+                setCourseCatalogue(allCourseCatalogue.filter(course =>
+                    search.length === 0 ||
+                    course.courseId.toLowerCase().indexOf(search) != -1 ||
+                    course.courseName.toLowerCase().indexOf(search) != -1
+                ));
             }
         }, 200);
     }
