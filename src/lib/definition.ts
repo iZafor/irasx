@@ -127,3 +127,19 @@ export interface RequirementCatalogue {
     approvedFemaleAid: string;
     advisorName: string;
 }
+
+export interface RequirementCatalogueMap {
+    [key: string]: {
+        minRequirement: number;
+        maxRequirement: number;
+        doneCredit: number;
+    }
+}
+
+export const CatalogGroupMap: { [key: string]: string } = {
+    "foundation": "Foundation Courses",
+    "internship": "Internship/Sr, Project/Study Abroad",
+    "major": "Major/Concentration/Departmental Requirement",
+    "core": "Core Courses",
+    "minor": "Minor",
+};

@@ -1,13 +1,24 @@
-import { getOfferedCourses, getPreRequisiteCourses, getCourseCatalogue } from "@/lib/apis";
+import {
+    getOfferedCourses,
+    getPreRequisiteCourses,
+    getCourseCatalogue,
+    getRequirementCatalogues
+} from "@/lib/apis";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import OfferedCourseTable from "./offered-course-table";
-import { OfferedCourse, CourseCatalogue } from "@/lib/definition";
+import {
+    OfferedCourse,
+    CourseCatalogue,
+    RequirementCatalogue,
+    RequirementCatalogueMap
+} from "@/lib/definition";
 import TableSkeleton from "./table-skeleton";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import CatalogueTable from "./course-catalogue-table";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { transformIntoRequirementCatalogueMap } from "@/lib/utils";
 
 const allOfferedCourses: OfferedCourse[] = [];
 const allCourseCatalogue: CourseCatalogue[] = [];
@@ -16,6 +27,8 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
     const [offeredCourses, setOfferedCourses] = useState(allOfferedCourses);
     const [courseCatalogue, setCourseCatalogue] = useState(allCourseCatalogue);
     const [preRequisiteMap, setPrerequisiteMap] = useState({});
+    const [requirementCatalogues, setRequirementCatalogues] = useState<RequirementCatalogue[]>([]);
+    const [requirementCatalogueMap, setRequirementCatalogueMap] = useState<RequirementCatalogueMap>({});
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
     const [params] = useSearchParams();
@@ -86,6 +99,15 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
         fetchPreRequisites();
     }, [id, authToken]);
 
+    useEffect(() => {
+        async function fetchRequirementCatalogues() {
+            const res = await getRequirementCatalogues(id, authToken);
+            setRequirementCatalogues(res);
+            setRequirementCatalogueMap(transformIntoRequirementCatalogueMap(res));
+        }
+        fetchRequirementCatalogues();
+    }, [id, authToken]);
+
     return (
         <div className="rounded-md border">
             <div className="flex p-4 pb-0 mb-4 justify-between">
@@ -108,11 +130,14 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                                     <OfferedCourseTable
                                         offeredCourses={offeredCourses}
                                         preRequisiteMap={preRequisiteMap}
+                                        requirementCatalogueMap={requirementCatalogueMap}
                                     />
                                     :
                                     <CatalogueTable
+                                        catalogue={catalogue || "Foundation"}
                                         courseCatalogue={courseCatalogue}
                                         preRequisiteMap={preRequisiteMap}
+                                        requirementCatalogueMap={requirementCatalogueMap}
                                     />
                             }
                         </div>

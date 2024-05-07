@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { StoredAuthData, Result, SemesterOrder, SemesterResult, STORED_AUTH_DATA_KEY, PreRequisiteCourse, PreRequisiteMap } from "./definition"
+import { StoredAuthData, Result, SemesterOrder, SemesterResult, STORED_AUTH_DATA_KEY, PreRequisiteCourse, PreRequisiteMap, RequirementCatalogue, RequirementCatalogueMap } from "./definition"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -63,6 +63,25 @@ export function transformIntoPreRequisiteMap(arr: PreRequisiteCourse[]) {
     }
   }
 
+  return res;
+}
+
+export function transformIntoRequirementCatalogueMap(arr: RequirementCatalogue[]) {
+  const res: RequirementCatalogueMap = {};
+  for (const catalogue of arr) {
+    const entry = res[catalogue.courseGroupName];
+    if (!entry) {
+      res[catalogue.courseGroupName] = {
+        minRequirement: Number(catalogue.minRequirment),
+        maxRequirement: Number(catalogue.maxRequirment),
+        doneCredit: Number(catalogue.doneCredit),
+      };
+    } else {
+      entry.minRequirement += Number(catalogue.minRequirment);
+      entry.maxRequirement += Number(catalogue.maxRequirment);
+      entry.doneCredit += Number(catalogue.doneCredit);
+    }
+  }
   return res;
 }
 
