@@ -21,11 +21,15 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { transformIntoRequirementCatalogueMap } from "@/lib/utils";
 
 const allOfferedCourses: OfferedCourse[] = [];
-const allCourseCatalogue: CourseCatalogue[] = [];
+const allFoundationCourseCatalogue: CourseCatalogue[] = [];
+const allMinorCourseCatalogue: CourseCatalogue[] = [];
+const allMajorCourseCatalogue: CourseCatalogue[] = [];
 
 export default function OfferedCourses({ id, authToken }: { id: string; authToken: string }) {
     const [offeredCourses, setOfferedCourses] = useState(allOfferedCourses);
-    const [courseCatalogue, setCourseCatalogue] = useState(allCourseCatalogue);
+    const [foundationCourseCatalogue, setFoundationCourseCatalogue] = useState(allFoundationCourseCatalogue);
+    const [majorCourseCatalogue, setMajorCourseCatalogue] = useState(allMajorCourseCatalogue);
+    const [minorCourseCatalogue, setMinorCourseCatalogue] = useState(allMinorCourseCatalogue);
     const [preRequisiteMap, setPrerequisiteMap] = useState({});
     const [requirementCatalogues, setRequirementCatalogues] = useState<RequirementCatalogue[]>([]);
     const [requirementCatalogueMap, setRequirementCatalogueMap] = useState<RequirementCatalogueMap>({});
@@ -49,8 +53,20 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                     course.courseName.toLowerCase().indexOf(search) != -1 ||
                     course.facualtyName.toLowerCase().indexOf(search) != -1
                 ));
-            } else {
-                setCourseCatalogue(allCourseCatalogue.filter(course =>
+            } else if (catalogue === "Foundation") {
+                setFoundationCourseCatalogue(allFoundationCourseCatalogue.filter(course =>
+                    search.length === 0 ||
+                    course.courseId.toLowerCase().indexOf(search) != -1 ||
+                    course.courseName.toLowerCase().indexOf(search) != -1
+                ));
+            } else if (catalogue === "Major") {
+                setMajorCourseCatalogue(allMajorCourseCatalogue.filter(course =>
+                    search.length === 0 ||
+                    course.courseId.toLowerCase().indexOf(search) != -1 ||
+                    course.courseName.toLowerCase().indexOf(search) != -1
+                ));
+            } else if (catalogue === "Minor") {
+                setMinorCourseCatalogue(allMinorCourseCatalogue.filter(course =>
                     search.length === 0 ||
                     course.courseId.toLowerCase().indexOf(search) != -1 ||
                     course.courseName.toLowerCase().indexOf(search) != -1
@@ -66,47 +82,53 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
     }, []);
 
     useEffect(() => {
-        setIsLoading(true);
+        async function fetchAllData() {
+            const [
+                offCourses,
+                fCatalogue,
+                maCatalogue,
+                miCatalogue,
+                reqMap,
+                reqCatalogue] = await Promise.all([
+                    getOfferedCourses(id, authToken),
+                    getCourseCatalogue(id, authToken, "Foundation"),
+                    getCourseCatalogue(id, authToken, "Major"),
+                    getCourseCatalogue(id, authToken, "Minor"),
+                    getPreRequisiteCourses(id, authToken),
+                    getRequirementCatalogues(id, authToken)
+                ]);
 
-        async function fetchOfferedCourses() {
-            const courses = await getOfferedCourses(id, authToken);
-            setOfferedCourses(courses);
+            // Offered Courses
+            setOfferedCourses(offCourses);
             allOfferedCourses.length = 0;
-            allOfferedCourses.push(...courses);
+            allOfferedCourses.push(...offCourses);
+
+            // Foundation Course Catalogue
+            setFoundationCourseCatalogue(fCatalogue);
+            allFoundationCourseCatalogue.length = 0;
+            allFoundationCourseCatalogue.push(...fCatalogue);
+
+            // Major Course Catalogue
+            setMajorCourseCatalogue(maCatalogue);
+            allMajorCourseCatalogue.length = 0;
+            allMajorCourseCatalogue.push(...maCatalogue);
+
+            // Minor Course Catalogue
+            setMinorCourseCatalogue(miCatalogue);
+            allMinorCourseCatalogue.length = 0;
+            allMinorCourseCatalogue.push(...miCatalogue);
+
+            // Pre-requisite Map
+            setPrerequisiteMap(reqMap);
+
+            // Requirement Catalogue
+            setRequirementCatalogues(reqCatalogue);
+            setRequirementCatalogueMap(transformIntoRequirementCatalogueMap(reqCatalogue));
+
             setIsLoading(false);
         }
-
-        async function fetchCatalogue() {
-            const courses = await getCourseCatalogue(id, authToken, catalogue || "");
-            setCourseCatalogue(courses);
-            allCourseCatalogue.length = 0;
-            allCourseCatalogue.push(...courses);
-            setIsLoading(false);
-        }
-
-        if (catalogue === "all") {
-            fetchOfferedCourses();
-        } else {
-            fetchCatalogue();
-        }
-    }, [id, authToken, catalogue]);
-
-    useEffect(() => {
-        async function fetchPreRequisites() {
-            const pre = await getPreRequisiteCourses(id, authToken);
-            setPrerequisiteMap(pre);
-        }
-        fetchPreRequisites();
-    }, [id, authToken]);
-
-    useEffect(() => {
-        async function fetchRequirementCatalogues() {
-            const res = await getRequirementCatalogues(id, authToken);
-            setRequirementCatalogues(res);
-            setRequirementCatalogueMap(transformIntoRequirementCatalogueMap(res));
-        }
-        fetchRequirementCatalogues();
-    }, [id, authToken]);
+        fetchAllData();
+    }, []);
 
     return (
         <div className="rounded-md border">
@@ -133,12 +155,31 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                                         requirementCatalogueMap={requirementCatalogueMap}
                                     />
                                     :
-                                    <CatalogueTable
-                                        catalogue={catalogue || "Foundation"}
-                                        courseCatalogue={courseCatalogue}
-                                        preRequisiteMap={preRequisiteMap}
-                                        requirementCatalogueMap={requirementCatalogueMap}
-                                    />
+                                    (
+                                        catalogue === "Foundation" ?
+                                            <CatalogueTable
+                                                catalogue={catalogue || "Foundation"}
+                                                courseCatalogue={foundationCourseCatalogue}
+                                                preRequisiteMap={preRequisiteMap}
+                                                requirementCatalogueMap={requirementCatalogueMap}
+                                            />
+                                            : (
+                                                catalogue === "Major" ?
+                                                    <CatalogueTable
+                                                        catalogue={catalogue || "Major"}
+                                                        courseCatalogue={majorCourseCatalogue}
+                                                        preRequisiteMap={preRequisiteMap}
+                                                        requirementCatalogueMap={requirementCatalogueMap}
+                                                    />
+                                                    :
+                                                    <CatalogueTable
+                                                        catalogue={catalogue || "Minor"}
+                                                        courseCatalogue={minorCourseCatalogue}
+                                                        preRequisiteMap={preRequisiteMap}
+                                                        requirementCatalogueMap={requirementCatalogueMap}
+                                                    />
+                                            )
+                                    )
                             }
                         </div>
                     </ScrollArea>

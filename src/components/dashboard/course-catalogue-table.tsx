@@ -28,11 +28,13 @@ export default function CatalogueTable(
             </div>
             <Table className="mt-4">
                 <TableHeader>
-                    <TableHead className="w-[5rem]">Course ID</TableHead>
-                    <TableHead className="w-[18rem]">Course Name</TableHead>
-                    <TableHead className="w-[5rem]">Credit Hour</TableHead>
-                    <TableHead className="w-[18rem]">Course Group</TableHead>
-                    <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
+                    <TableRow>
+                        <TableHead className="w-[5rem]">Course ID</TableHead>
+                        <TableHead className="w-[18rem]">Course Name</TableHead>
+                        <TableHead className="w-[5rem]">Credit Hour</TableHead>
+                        <TableHead className="w-[18rem]">Course Group</TableHead>
+                        <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
+                    </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
