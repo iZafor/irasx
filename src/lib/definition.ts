@@ -103,3 +103,27 @@ export interface CatalogueCourse {
     courseNatureName: string;
     courseTypeId: string;
 }
+
+export interface RequirementCatalogue {
+    studentId: string;
+    admissionCode: string;
+    programId: string;
+    countS: string;
+    concentrationId: string;
+    creditEarned: string;
+    creditForGPA: string;
+    creditAttemted: string;
+    cgpa: string;
+    courseGroupName: string;
+    courseCatGroupName: string;
+    courseGroupId: string;
+    courseTypeName: string;
+    courseTypeId: string;
+    courseCatId: string;
+    doneCredit: string;
+    maxRequirment: string;
+    minRequirment: string;
+    approvedFinAid: string;
+    approvedFemaleAid: string;
+    advisorName: string;
+}

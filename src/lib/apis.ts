@@ -1,4 +1,4 @@
-import { AuthData, GradesResponse, OfferedCourse, PreRequisiteCourse, CatalogueCourse } from "./definition";
+import { AuthData, GradesResponse, OfferedCourse, PreRequisiteCourse, CatalogueCourse, RequirementCatalogue } from "./definition";
 import { transformIntoPreRequisiteMap } from "./utils";
 
 export async function login(data: AuthData) {
@@ -74,6 +74,25 @@ export async function getCourseCatalogue(id: string, authToken: string, catalogu
     try {
         const res: { data: CatalogueCourse[] } = await fetch(
             `https://iras.iub.edu.bd:8079//api/v1/common/catalouge-details/${id}/${catalogue}`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        ).then(res => res.json());
+        return res.data;
+    } catch (error) {
+        console.error(error);
+    }
+    return [];
+}
+
+export async function getRequirementCatalogues(id: string, authToken: string) {
+    try {
+        const res: { data: RequirementCatalogue[] } = await fetch(
+            `https://iras.iub.edu.bd:8079//api/v1/registration/student-catelogue-requirment/${id}`,
             {
                 method: "GET",
                 headers: {
