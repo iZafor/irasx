@@ -1,4 +1,4 @@
-import { AuthData, OfferedCourse, PreRequisiteCourse } from "./definition";
+import { AuthData, GradesResponse, OfferedCourse, PreRequisiteCourse } from "./definition";
 import { transformIntoPreRequisiteMap } from "./utils";
 
 export async function login(data: AuthData) {
@@ -14,16 +14,22 @@ export async function login(data: AuthData) {
 }
 
 export async function getGrades(id: string, authToken: string) {
-    return fetch(
-        `https://iras.iub.edu.bd:8079//api/v1/registration/student-registered-courses/${id}/all`,
-        {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${authToken}`,
-                "Content-Type": "application/json"
+    try {
+        const res: GradesResponse = await fetch(
+            `https://iras.iub.edu.bd:8079//api/v1/registration/student-registered-courses/${id}/all`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`,
+                    "Content-Type": "application/json"
+                }
             }
-        }
-    );
+        ).then(res => res.json());
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+    return { data: [], total: 0 };
 }
 
 export async function getOfferedCourses(id: string, authToken: string) {

@@ -25,7 +25,7 @@ export default function Grades({ id, authToken }: { id: string; authToken: strin
     useEffect(() => {
         async function fetchGradeData() {
             try {
-                const grades: GradesResponse = await getGrades(id, authToken).then(res => res.json());
+                const grades: GradesResponse = await getGrades(id, authToken);
                 setResult(transformIntoResult(grades.data));
                 data.length = 0;
                 data.push(...grades.data);
