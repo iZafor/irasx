@@ -6,7 +6,6 @@ import {
 } from "@/lib/apis";
 import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
-import { ScrollArea } from "../ui/scroll-area";
 import OfferedCourseTable from "./offered-course-table";
 import {
     OfferedCourse,
@@ -20,6 +19,7 @@ import CatalogueTable from "./course-catalogue-table";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { transformIntoRequirementCatalogueMap } from "@/lib/utils";
 import CatalogueCreditCount from "./catalogue-credit-count";
+import RequirementCatalogueTable from "./requirement-catalogue-table";
 
 const allOfferedCourses: OfferedCourse[] = [];
 const allFoundationCourseCatalogue: CourseCatalogue[] = [];
@@ -77,7 +77,7 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
     }
 
     useEffect(() => {
-        if (!catalogue || !(["all", "Foundation", "Major", "Minor"].some(c => c === catalogue))) {
+        if (!catalogue || !(["all", "Foundation", "Major", "Minor", "requirements"].some(c => c === catalogue))) {
             navigateTo("all");
         }
     }, []);
@@ -140,9 +140,15 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                         <TabsTrigger value="Foundation" onClick={() => navigateTo("Foundation")}>Foundation</TabsTrigger>
                         <TabsTrigger value="Major" onClick={() => navigateTo("Major")}>Major</TabsTrigger>
                         <TabsTrigger value="Minor" onClick={() => navigateTo("Minor")}>Minor</TabsTrigger>
+                        <TabsTrigger value="requirements" onClick={() => navigateTo("requirements")}>
+                            Requirements
+                        </TabsTrigger>
                     </TabsList>
                 </Tabs>
-                <Input className="w-30" placeholder="Search here..." onChange={handleSearch} />
+                {
+                    catalogue !== "requirements" &&
+                    <Input className="w-30" placeholder="Search here..." onChange={handleSearch} />
+                }
             </div>
             <CatalogueCreditCount
                 catalogue={catalogue || "none"}
@@ -172,12 +178,14 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                                                     courseCatalogue={majorCourseCatalogue}
                                                     preRequisiteMap={preRequisiteMap}
                                                 />
-                                                :
-                                                <CatalogueTable
-                                                    catalogue={catalogue}
-                                                    courseCatalogue={minorCourseCatalogue}
-                                                    preRequisiteMap={preRequisiteMap}
-                                                />
+                                                : catalogue === "Minor" ?
+                                                    <CatalogueTable
+                                                        catalogue={catalogue}
+                                                        courseCatalogue={minorCourseCatalogue}
+                                                        preRequisiteMap={preRequisiteMap}
+                                                    />
+                                                    :
+                                                    <RequirementCatalogueTable catalogue={requirementCatalogues} />
                                         )
                                 )
                         }
