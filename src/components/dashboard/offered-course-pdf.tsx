@@ -27,7 +27,7 @@ export default function OfferedCoursePdf(
 
     return (
         <Document pageMode="fullScreen">
-            <Page size="A2" style={tw("p-10")}>
+            <Page size="A2" style={tw("p-10")} wrap={false}>
                 <View style={tw("font-semibold")}>
                     <Text>Offered Courses</Text>
                 </View>

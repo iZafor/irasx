@@ -150,37 +150,38 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
             />
             {
                 !isLoading ?
-                    <ScrollArea className="h-[30rem]">
-                        <div className="p-4">
-                            {
-                                catalogue === "all" ?
-                                    <OfferedCourseTable
-                                        offeredCourses={offeredCourses}
-                                        preRequisiteMap={preRequisiteMap}
-                                    />
-                                    :
-                                    (
-                                        catalogue === "Foundation" ?
-                                            <CatalogueTable
-                                                courseCatalogue={foundationCourseCatalogue}
-                                                preRequisiteMap={preRequisiteMap}
-                                            />
-                                            : (
-                                                catalogue === "Major" ?
-                                                    <CatalogueTable
-                                                        courseCatalogue={majorCourseCatalogue}
-                                                        preRequisiteMap={preRequisiteMap}
-                                                    />
-                                                    :
-                                                    <CatalogueTable
-                                                        courseCatalogue={minorCourseCatalogue}
-                                                        preRequisiteMap={preRequisiteMap}
-                                                    />
-                                            )
-                                    )
-                            }
-                        </div>
-                    </ScrollArea>
+                    <>
+                        {
+                            catalogue === "all" ?
+                                <OfferedCourseTable
+                                    offeredCourses={offeredCourses}
+                                    preRequisiteMap={preRequisiteMap}
+                                />
+                                :
+                                (
+                                    catalogue === "Foundation" ?
+                                        <CatalogueTable
+                                            catalogue={catalogue}
+                                            courseCatalogue={foundationCourseCatalogue}
+                                            preRequisiteMap={preRequisiteMap}
+                                        />
+                                        : (
+                                            catalogue === "Major" ?
+                                                <CatalogueTable
+                                                    catalogue={catalogue}
+                                                    courseCatalogue={majorCourseCatalogue}
+                                                    preRequisiteMap={preRequisiteMap}
+                                                />
+                                                :
+                                                <CatalogueTable
+                                                    catalogue={catalogue}
+                                                    courseCatalogue={minorCourseCatalogue}
+                                                    preRequisiteMap={preRequisiteMap}
+                                                />
+                                        )
+                                )
+                        }
+                    </>
                     :
                     <TableSkeleton />
             }

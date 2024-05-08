@@ -55,9 +55,16 @@ export function Separator({ width = "1px", className }: { width?: string; classN
     );
 }
 
+interface PDfDownloadButtonProps { 
+    fileName: string; 
+    className?: string; 
+    buttonText?: string; 
+    pdfDocument: React.ReactElement; 
+    disabled: boolean 
+}
+
 export function PDfDownloadButton(
-    { fileName, className, buttonText = "Export", pdfDocument }:
-        { fileName: string; className?: string; buttonText?: string; pdfDocument: React.ReactElement }) {
+    { fileName, className, buttonText = "Export", pdfDocument, disabled }: PDfDownloadButtonProps) {
     async function handleDownload() {
         try {
             const blob = await pdf(pdfDocument).toBlob();
@@ -76,7 +83,7 @@ export function PDfDownloadButton(
     }
 
     return (
-        <Button className={cn("space-x-2", className)} onClick={handleDownload}>
+        <Button disabled={disabled} className={cn("gap-1", className)} onClick={handleDownload}>
             <Download size={16} />
             <p className="text-base">{buttonText}</p>
         </Button>

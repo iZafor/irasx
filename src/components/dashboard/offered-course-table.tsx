@@ -10,6 +10,7 @@ import { OfferedCourse, PreRequisiteMap } from "@/lib/definition";
 import { useState } from "react";
 import OfferedCoursePdf from "./offered-course-pdf";
 import { PDfDownloadButton } from "../pdf";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface OfferedCourseTableProps {
     offeredCourses: OfferedCourse[];
@@ -20,6 +21,8 @@ export default function OfferedCourseTable(
     { offeredCourses, preRequisiteMap }: OfferedCourseTableProps) {
 
     const [checkedArray, setCheckedArray] = useState(Array.from({ length: offeredCourses.length }, () => false));
+    const [exportDisable, setExportDisable] = useState(true);
+
     function handleClick(ev: React.ChangeEvent<HTMLInputElement>) {
         const { checked: newState, name } = ev.currentTarget;
         const courseId = offeredCourses[parseInt(name)].courseId;
@@ -30,14 +33,16 @@ export default function OfferedCourseTable(
             }
             checkedArray[i] = newState;
         }
+        setExportDisable(!checkedArray.some(chk => chk));
         setCheckedArray(checkedArray.slice());
     }
 
     return (
-        <div>
-            <div className="flex w-full justify-end my-2">
+        <>
+            <div className="flex w-full justify-end p-4">
                 <PDfDownloadButton
                     fileName="offered_courses"
+                    disabled={exportDisable}
                     pdfDocument={
                         <OfferedCoursePdf
                             checkedArray={checkedArray}
@@ -47,51 +52,55 @@ export default function OfferedCourseTable(
                     }
                 />
             </div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[8rem]">Course ID</TableHead>
-                        <TableHead className="w-[18rem]">Course Name</TableHead>
-                        <TableHead className="w-[5rem]">Section</TableHead>
-                        <TableHead className="w-[5rem]">Enrolled</TableHead>
-                        <TableHead className="w-[5rem]">Vacancy</TableHead>
-                        <TableHead className="w-[8rem]">Time Slot</TableHead>
-                        <TableHead className="w-[15rem]">Faculty</TableHead>
-                        <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {
-                        offeredCourses.map((row, idx) => (
-                            <TableRow key={row.courseId + idx}>
-                                <TableCell>
-                                    <span className="flex items-center justify-start gap-2">
-                                        <input
-                                            type="checkbox"
-                                            onChange={handleClick}
-                                            checked={checkedArray[idx]}
-                                            name={`${idx}-chk`}
-                                        />
-                                        <p className="">
-                                            {row.courseId}
-                                        </p>
-                                    </span>
-                                </TableCell>
-                                <TableCell>{row.courseName}</TableCell>
-                                <TableCell>{row.section}</TableCell>
-                                <TableCell>{row.enrolled}</TableCell>
-                                <TableCell>{row.vacancy}</TableCell>
-                                <TableCell>{row.timeSlot}</TableCell>
-                                <TableCell>{row.facualtyName}</TableCell>
-                                <TableCell>
-                                    <PreRequisites courseId={row.courseId} preRequisiteMap={preRequisiteMap} />
-                                </TableCell>
+            <ScrollArea className="h-[28rem]">
+                <div className="p-4">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[8rem]">Course ID</TableHead>
+                                <TableHead className="w-[18rem]">Course Name</TableHead>
+                                <TableHead className="w-[5rem]">Section</TableHead>
+                                <TableHead className="w-[5rem]">Enrolled</TableHead>
+                                <TableHead className="w-[5rem]">Vacancy</TableHead>
+                                <TableHead className="w-[8rem]">Time Slot</TableHead>
+                                <TableHead className="w-[15rem]">Faculty</TableHead>
+                                <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
                             </TableRow>
-                        ))
-                    }
-                </TableBody>
-            </Table>
-        </div>
+                        </TableHeader>
+                        <TableBody>
+                            {
+                                offeredCourses.map((row, idx) => (
+                                    <TableRow key={row.courseId + idx}>
+                                        <TableCell>
+                                            <span className="flex items-center justify-start gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    onChange={handleClick}
+                                                    checked={checkedArray[idx]}
+                                                    name={`${idx}-chk`}
+                                                />
+                                                <p className="">
+                                                    {row.courseId}
+                                                </p>
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>{row.courseName}</TableCell>
+                                        <TableCell>{row.section}</TableCell>
+                                        <TableCell>{row.enrolled}</TableCell>
+                                        <TableCell>{row.vacancy}</TableCell>
+                                        <TableCell>{row.timeSlot}</TableCell>
+                                        <TableCell>{row.facualtyName}</TableCell>
+                                        <TableCell>
+                                            <PreRequisites courseId={row.courseId} preRequisiteMap={preRequisiteMap} />
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                        </TableBody>
+                    </Table>
+                </div>
+            </ScrollArea>
+        </>
     );
 }
 

@@ -1,40 +1,65 @@
 import { CourseCatalogue, PreRequisiteMap } from "@/lib/definition";
 import { Table, TableHeader, TableHead, TableBody, TableCell, TableRow } from "../ui/table";
+import { ScrollArea } from "../ui/scroll-area";
+import { PDfDownloadButton } from "../pdf";
+import CourseCataloguePdf from "./course-catalogue-pdf";
 
 interface CatalogueTableProps {
+    catalogue: string | null;
     courseCatalogue: CourseCatalogue[];
     preRequisiteMap: PreRequisiteMap;
 }
 
 export default function CatalogueTable(
-    { courseCatalogue, preRequisiteMap }: CatalogueTableProps) {
+    { catalogue, courseCatalogue, preRequisiteMap }: CatalogueTableProps) {
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    <TableHead className="w-[5rem]">Course ID</TableHead>
-                    <TableHead className="w-[18rem]">Course Name</TableHead>
-                    <TableHead className="w-[5rem]">Credit Hour</TableHead>
-                    <TableHead className="w-[18rem]">Course Group</TableHead>
-                    <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {
-                    courseCatalogue.map(course => (
-                        <TableRow key={course.courseId}>
-                            <TableCell>{course.courseId}</TableCell>
-                            <TableCell>{course.courseName}</TableCell>
-                            <TableCell>{course.createHour}</TableCell>
-                            <TableCell>{course.courseGroupName}</TableCell>
-                            <TableCell>
-                                {<PreRequisites courseId={course.courseId} preRequisiteMap={preRequisiteMap} />}
-                            </TableCell>
-                        </TableRow>
-                    ))
-                }
-            </TableBody>
-        </Table>
+        <>
+            <div className="flex w-full justify-end p-4">
+                <PDfDownloadButton
+                    fileName={`${catalogue?.toLowerCase()}_courses_catalogue`}
+                    disabled={false}
+                    pdfDocument={
+                        <CourseCataloguePdf
+                            catalogueTitle={catalogue || ""}
+                            courseCatalogue={courseCatalogue}
+                            preRequisiteMap={preRequisiteMap}
+                        />
+                    }
+                />
+            </div>
+            <ScrollArea className="h-[28rem]">
+                <div className="p-4">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[5rem]">Course ID</TableHead>
+                                <TableHead className="w-[18rem]">Course Name</TableHead>
+                                <TableHead className="w-[5rem]">Credit Hour</TableHead>
+                                <TableHead className="w-[18rem]">Course Group</TableHead>
+                                <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {
+                                courseCatalogue.map(course => (
+                                    <TableRow key={course.courseId}>
+                                        <TableCell>{course.courseId}</TableCell>
+                                        <TableCell>{course.courseName}</TableCell>
+                                        <TableCell>{course.createHour}</TableCell>
+                                        <TableCell>{course.courseGroupName}</TableCell>
+                                        <TableCell>
+                                            {
+                                                <PreRequisites courseId={course.courseId} preRequisiteMap={preRequisiteMap} />
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            }
+                        </TableBody>
+                    </Table>
+                </div>
+            </ScrollArea>
+        </>
     );
 }
 
