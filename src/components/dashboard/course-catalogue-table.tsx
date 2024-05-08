@@ -33,8 +33,8 @@ export default function CatalogueTable(
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[5rem]">COURSE</TableHead>
-                                <TableHead className="w-[18rem]">TITLE</TableHead>
-                                <TableHead className="w-[5rem]">CREDIT HOUR</TableHead>
+                                <TableHead className="w-[16rem]">TITLE</TableHead>
+                                <TableHead className="w-[7rem]">CREDIT HOUR</TableHead>
                                 <TableHead className="w-[18rem]">COURSE GROUP</TableHead>
                                 <TableHead className="w-[7rem]">PRE-REQUISITES</TableHead>
                             </TableRow>

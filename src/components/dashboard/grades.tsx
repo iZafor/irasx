@@ -44,7 +44,7 @@ export default function Grades({ id, authToken }: { id: string; authToken: strin
             </div>
             {
                 !isLoading ?
-                    <ScrollArea className="h-[30rem]">
+                    <ScrollArea className="h-[35rem]">
                         <div className="p-4">
                             {result.keys.map((key) =>
                                 result[key].keys.map((year, idx) =>
