@@ -28,7 +28,7 @@ export default function CatalogueTable(
                 />
             </div>
             <ScrollArea className="h-[28rem]">
-                <div className="p-4">
+                <div className="p-4 pl-2">
                     <Table>
                         <TableHeader>
                             <TableRow>

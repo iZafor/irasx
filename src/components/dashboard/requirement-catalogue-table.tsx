@@ -9,7 +9,7 @@ interface RequirementCatalogueProps {
 export default function RequirementCatalogueTable({ catalogue }: RequirementCatalogueProps) {
     return (
         <ScrollArea className="h-[32rem]">
-            <div className="p-4">
+            <div className="p-4 pl-2">
                 <Table>
                     <TableHeader>
                         <TableRow>

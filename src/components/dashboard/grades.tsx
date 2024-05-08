@@ -45,7 +45,7 @@ export default function Grades({ id, authToken }: { id: string; authToken: strin
             {
                 !isLoading ?
                     <ScrollArea className="h-[35rem]">
-                        <div className="p-4">
+                        <div className="p-4 pl-2">
                             {result.keys.map((key) =>
                                 result[key].keys.map((year, idx) =>
                                     <span key={year + "+" + idx}>

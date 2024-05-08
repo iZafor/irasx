@@ -37,9 +37,19 @@ export default function OfferedCourseTable(
         setCheckedArray(checkedArray.slice());
     }
 
+    function handleSelectAll(ev: React.ChangeEvent<HTMLInputElement>) {
+        const { checked } = ev.currentTarget;
+        setCheckedArray(Array.from({ length: checkedArray.length }, () => checked));
+        setExportDisable(!checked);
+    }
+
     return (
         <>
-            <div className="flex w-full justify-end p-4">
+            <div className="flex w-full justify-between items-center p-4">
+                <span className="space-x-2">
+                    <input type="checkbox" id="selectAll" onChange={handleSelectAll} />
+                    <label htmlFor="selectAll">Select All</label>
+                </span>
                 <PDfDownloadButton
                     fileName="offered_courses"
                     disabled={exportDisable}
@@ -53,7 +63,7 @@ export default function OfferedCourseTable(
                 />
             </div>
             <ScrollArea className="h-[28rem]">
-                <div className="p-4">
+                <div className="p-4 pl-2">
                     <Table>
                         <TableHeader>
                             <TableRow>
