@@ -23,13 +23,13 @@ export function SemesterTable({ res }: { res: SemesterResult[] }) {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead colSpan={4} className="text-xl font-bold">{mapSemester(res[0].regSemester)} - {res[0].regYear}</TableHead>
+                    <TableHead colSpan={4} className="text-xl font-bold">{mapSemester(res[0].regSemester).toUpperCase()} - {res[0].regYear}</TableHead>
                 </TableRow>
                 <TableRow>
-                    <TableHead className="w-[6rem]">Course ID</TableHead>
-                    <TableHead className="w-[28rem]">Course Name</TableHead>
-                    <TableHead>Grade</TableHead>
-                    <TableHead className="text-right">Grade Point</TableHead>
+                    <TableHead className="w-[6rem]">COURSE</TableHead>
+                    <TableHead className="w-[28rem]">TITLE</TableHead>
+                    <TableHead>GRADE</TableHead>
+                    <TableHead className="text-right">POINT</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>

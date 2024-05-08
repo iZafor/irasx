@@ -57,14 +57,14 @@ export default function OfferedCourseTable(
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[8rem]">Course ID</TableHead>
-                                <TableHead className="w-[18rem]">Course Name</TableHead>
-                                <TableHead className="w-[5rem]">Section</TableHead>
-                                <TableHead className="w-[5rem]">Enrolled</TableHead>
-                                <TableHead className="w-[5rem]">Vacancy</TableHead>
-                                <TableHead className="w-[8rem]">Time Slot</TableHead>
-                                <TableHead className="w-[15rem]">Faculty</TableHead>
-                                <TableHead className="w-[7rem]">Pre-Requisites</TableHead>
+                                <TableHead className="w-[8rem]">COURSE</TableHead>
+                                <TableHead className="w-[18rem]">TITLE</TableHead>
+                                <TableHead className="w-[5rem]">SECTION</TableHead>
+                                <TableHead className="w-[5rem]">ENROLLED</TableHead>
+                                <TableHead className="w-[5rem]">VACANCY</TableHead>
+                                <TableHead className="w-[8rem]">TIME SLOT</TableHead>
+                                <TableHead className="w-[15rem]">FACULTY</TableHead>
+                                <TableHead className="w-[7rem]">PRE-REQUISITES</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
