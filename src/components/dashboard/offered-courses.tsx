@@ -17,7 +17,7 @@ import TableSkeleton from "./table-skeleton";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import CatalogueTable from "./course-catalogue-table";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { transformIntoRequirementCatalogueMap } from "@/lib/utils";
+import { transformIntoPreRequisiteMap, transformIntoRequirementCatalogueMap } from "@/lib/utils";
 import CatalogueCreditCount from "./catalogue-credit-count";
 import RequirementCatalogueTable from "./requirement-catalogue-table";
 
@@ -89,7 +89,7 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                 fCatalogue,
                 maCatalogue,
                 miCatalogue,
-                reqMap,
+                preReqCourses,
                 reqCatalogue] = await Promise.all([
                     getOfferedCourses(id, authToken),
                     getCourseCatalogue(id, authToken, "Foundation"),
@@ -120,7 +120,7 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
             allMinorCourseCatalogue.push(...miCatalogue);
 
             // Pre-requisite Map
-            setPrerequisiteMap(reqMap);
+            setPrerequisiteMap(transformIntoPreRequisiteMap(preReqCourses, offCourses));
 
             // Requirement Catalogue
             setRequirementCatalogues(reqCatalogue);

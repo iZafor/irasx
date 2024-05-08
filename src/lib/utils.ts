@@ -10,7 +10,9 @@ import {
     PreRequisiteMap,
     RequirementCatalogue,
     RequirementCatalogueMap,
+    OfferedCourse,
 } from "./definition";
+import { BinaryTree } from "./binary-tree";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -61,23 +63,31 @@ export function transformIntoResult(arr: SemesterResult[]) {
     return tempResult;
 }
 
-export function transformIntoPreRequisiteMap(arr: PreRequisiteCourse[]) {
+export function transformIntoPreRequisiteMap(arr: PreRequisiteCourse[], offeredCourses: OfferedCourse[]) {
     const res: PreRequisiteMap = {};
+    const tree = new BinaryTree();
+
+    for (const course of offeredCourses) {
+        tree.insert(course.courseId);
+    }
+
     for (const course of arr) {
-        if (!res[course.courseId]) {
-            res[course.courseId] = {
-                preRequisites: [
-                    {
-                        courseId: course.preReqCourseId,
-                        status: course.gradePoint ? "complete" : "incomplete",
-                    },
-                ],
-            };
-        } else {
-            res[course.courseId].preRequisites.push({
-                courseId: course.preReqCourseId,
-                status: course.gradePoint ? "complete" : "incomplete",
-            });
+        if (tree.find(course.preReqCourseId)) {
+            if (!res[course.courseId]) {
+                res[course.courseId] = {
+                    preRequisites: [
+                        {
+                            courseId: course.preReqCourseId,
+                            status: course.gradePoint ? "complete" : "incomplete",
+                        },
+                    ],
+                };
+            } else {
+                res[course.courseId].preRequisites.push({
+                    courseId: course.preReqCourseId,
+                    status: course.gradePoint ? "complete" : "incomplete",
+                });
+            }
         }
     }
 
