@@ -12,15 +12,17 @@ export default function RequirementCatalogueTable({ catalogue }: RequirementCata
             <div className="p-4">
                 <Table>
                     <TableHeader>
-                        <TableHead>GROUP</TableHead>
-                        <TableHead>CATEGORY</TableHead>
-                        <TableHead>TYPE</TableHead>
-                        <TableHead>MIN REQ</TableHead>
-                        <TableHead>DONE</TableHead>
+                        <TableRow>
+                            <TableHead>GROUP</TableHead>
+                            <TableHead>CATEGORY</TableHead>
+                            <TableHead>TYPE</TableHead>
+                            <TableHead>MIN REQ</TableHead>
+                            <TableHead>DONE</TableHead>
+                        </TableRow>
                     </TableHeader>
                     <TableBody>
                         {
-                            catalogue.map((c, idx) => 
+                            catalogue.map((c, idx) =>
                                 <TableRow key={`${c.courseCatId}-${idx}`}>
                                     <TableCell>{c.courseGroupName}</TableCell>
                                     <TableCell>{c.courseCatGroupName}</TableCell>
