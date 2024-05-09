@@ -19,7 +19,7 @@ export default function DashboardTabs() {
         const newParams = new URLSearchParams(params);
         newParams.set("tab", tab);
         if (catalogue) {
-            newParams.set("catalogue", "all");
+            newParams.set("catalogue", "All");
         }
         const newPath = `${location.pathname}?${newParams.toString()}`;
         navigate(newPath);
