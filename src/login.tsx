@@ -41,14 +41,14 @@ export default function Login() {
             <div className="w-full h-[3rem] flex items-center justify-end pr-4 mt-4">
                 <ModeToggle />
             </div>
-            <div className="mt-60 w-full grid place-items-center">
-                <Card className="p-10">
-                    <CardTitle className="text-3xl">Enter your credentials</CardTitle>
+            <div className="mt-[13rem] max-sm:mt-[8rem] w-full grid place-items-center">
+                <Card className="p-10 max-sm:p-8">
+                    <CardTitle className="text-3xl max-sm:text-xl">Enter your credentials</CardTitle>
                     <CardContent className="p-0 mt-4">
                         <form className="space-y-4" onSubmit={handleLogin}>
-                            <Input className="text-base" name="uid" placeholder="ID" required />
-                            <Input className="text-base" type="password" name="password" placeholder="Password" required />
-                            <Button className="text-base" type="submit">Login</Button>
+                            <Input className="text-base max-sm:text-sm" name="uid" placeholder="ID" required />
+                            <Input className="text-base max-sm:text-sm" type="password" name="password" placeholder="Password" required />
+                            <Button className="text-base max-sm:text-sm" type="submit">Login</Button>
                             {showInvalid &&
                                 <p className="text-red-500">Invalid credentials!</p>
                             }
