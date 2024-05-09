@@ -1,36 +1,30 @@
-`irasx` is a [React JS](https://react.dev/) based CSR app, focusing on modern style and ease of use.
-Leveraging the APIs utilized by [iras](http://www.irasv1.iub.edu.bd/#/) it seamlessly retrieves data for enhanced functionality. It is worth noting that the app is not currently compatible with mobile screens.
+# React + TypeScript + Vite
 
-<hr>
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Major Dependencies -
+Currently, two official plugins are available:
 
--   [shadcn](https://ui.shadcn.com/) - for ui components
--   [tailwindcss](https://tailwindcss.com/) - for styling
--   [react-pdf](https://github.com/diegomura/react-pdf) - for pdf generation
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-<hr>
+## Expanding the ESLint configuration
 
-Some screenshots of the users interface -
-<img src="./public/login.png"/>
-<img src="./public/all-offered-courses.png"/>
-<img src="./public/requirement-catalogue.png"/>
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-<hr>
+- Configure the top-level `parserOptions` property like this:
 
-To run the project locally follow these steps -
-1. Clone the repository and change the directory
-```bash
-git clone https://github.com/iZafor/irasx.git
-cd irasx
-```
-2. Install dependencies
-```bash
-npm install
-```
-3. Run the project
-```
-npm run dev
+```js
+export default {
+  // other rules...
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: ['./tsconfig.json', './tsconfig.node.json'],
+    tsconfigRootDir: __dirname,
+  },
+}
 ```
 
-`Note:` Since the APIs are accessible through browser dev tools, I can't take responsibility for potential cyber attacks. Essentially, it's just a layer over the original APIs.
+- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
+- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
