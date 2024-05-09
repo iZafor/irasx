@@ -40,12 +40,12 @@ export default function Grades({ id, authToken }: { id: string; authToken: strin
     return (
         <div className="rounded-md border">
             <div className="flex p-4 pb-0 justify-end mb-4">
-                <Input className="w-30" placeholder="Search here..." onChange={handleSearch} />
+                <Input className="w-30 max-xs:w-full" placeholder="Search here..." onChange={handleSearch} />
             </div>
             {
                 !isLoading ?
                     <div className="max-md:overflow-x-scroll">
-                        <ScrollArea className="h-[35rem] max-md:w-[40rem]">
+                        <ScrollArea className="h-[35rem] max-md:h-[33.6rem] max-md:w-[40rem]">
                             <div className="p-4 pl-2">
                                 {result.keys.map((key) =>
                                     result[key].keys.map((year, idx) =>

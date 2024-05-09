@@ -12,8 +12,9 @@ export default {
     prefix: "",
     theme: {
         screens: {
+            xs: "502px",
             sm: "640px",
-            md: "768px",
+            md: "820px",
             lg: "1024px",
             xl: "1270px",
             "2xl": "1400px"

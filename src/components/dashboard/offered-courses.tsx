@@ -142,29 +142,18 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
     return (
         <div className="rounded-md border">
             <div className="flex p-4 pb-0 mb-4 justify-between">
-                <Tabs defaultValue={catalogue || "all"} className="max-md:hidden">
-                    <TabsList>
-                        <TabsTrigger value="all" onClick={() => navigateTo("all")}>All</TabsTrigger>
-                        <TabsTrigger value="Foundation" onClick={() => navigateTo("Foundation")}>Foundation</TabsTrigger>
-                        <TabsTrigger value="Major" onClick={() => navigateTo("Major")}>Major</TabsTrigger>
-                        <TabsTrigger value="Minor" onClick={() => navigateTo("Minor")}>Minor</TabsTrigger>
-                        <TabsTrigger value="requirements" onClick={() => navigateTo("requirements")}>
-                            Requirements
-                        </TabsTrigger>
-                    </TabsList>
-                </Tabs>
-                <NavigationMenu className="md:hidden">
+                <NavigationMenu>
                     <NavigationMenuList>
                         <NavigationMenuItem>
                             <NavigationMenuTrigger className="pl-0">{`${catalogue?.charAt(0).toUpperCase()}${catalogue?.substring(1)}`}</NavigationMenuTrigger>
                             <NavigationMenuContent>
                                 <Tabs defaultValue={catalogue || "all"}>
-                                    <TabsList className="flex-col h-30">
-                                        <TabsTrigger className="w-full" value="all" onClick={() => navigateTo("all")}>All</TabsTrigger>
-                                        <TabsTrigger className="w-full" value="Foundation" onClick={() => navigateTo("Foundation")}>Foundation</TabsTrigger>
-                                        <TabsTrigger className="w-full" value="Major" onClick={() => navigateTo("Major")}>Major</TabsTrigger>
-                                        <TabsTrigger className="w-full" value="Minor" onClick={() => navigateTo("Minor")}>Minor</TabsTrigger>
-                                        <TabsTrigger className="w-full" value="requirements" onClick={() => navigateTo("requirements")}>
+                                    <TabsList className="max-md:flex-col h-30">
+                                        <TabsTrigger className="max-md:w-full" value="all" onClick={() => navigateTo("all")}>All</TabsTrigger>
+                                        <TabsTrigger className="max-md:w-full" value="Foundation" onClick={() => navigateTo("Foundation")}>Foundation</TabsTrigger>
+                                        <TabsTrigger className="max-md:w-full" value="Major" onClick={() => navigateTo("Major")}>Major</TabsTrigger>
+                                        <TabsTrigger className="max-md:w-full" value="Minor" onClick={() => navigateTo("Minor")}>Minor</TabsTrigger>
+                                        <TabsTrigger className="max-md:w-full" value="requirements" onClick={() => navigateTo("requirements")}>
                                             Requirements
                                         </TabsTrigger>
                                     </TabsList>
@@ -175,7 +164,7 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                 </NavigationMenu>
                 {
                     catalogue !== "requirements" &&
-                    <Input className={`w-30 max-sm:w-[7rem]`} placeholder="Search here..." onChange={handleSearch} />
+                    <Input className={`w-30 w-[10rem] max-xs:w-[7rem]`} placeholder="Search here..." onChange={handleSearch} />
                 }
             </div>
             <CatalogueCreditCount

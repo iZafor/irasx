@@ -33,8 +33,8 @@ export default function DashboardTabs() {
 
     return (
         <>
-            <Tabs defaultValue={query || "grades"} className="">
-                <TabsList className="mb-4">
+            <Tabs defaultValue={query || "grades"}>
+                <TabsList className="mb-4 max-xs:w-full max-xs:justify-evenly">
                     <TabsTrigger value="grades" onClick={() => navigateTo("grades")}>Grades</TabsTrigger>
                     <TabsTrigger value="courses" onClick={() => navigateTo("courses")}>Offered Courses</TabsTrigger>
                 </TabsList>

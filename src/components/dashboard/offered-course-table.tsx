@@ -65,7 +65,7 @@ export default function OfferedCourseTable(
             <div className="max-md:overflow-x-scroll">
                 <ScrollArea className="h-[28rem] lg:text-sm max-md:w-[75rem] max-md:h-[22rem]">
                     <div className="p-4 pl-2">
-                        <Table className="text-xs">
+                        <Table className="max-md:text-xs">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-[8rem]">COURSE</TableHead>
