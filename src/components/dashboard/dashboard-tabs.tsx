@@ -33,7 +33,7 @@ export default function DashboardTabs() {
 
     return (
         <>
-            <Tabs defaultValue={query || "grades"} className="w-[70rem]">
+            <Tabs defaultValue={query || "grades"} className="">
                 <TabsList className="mb-4">
                     <TabsTrigger value="grades" onClick={() => navigateTo("grades")}>Grades</TabsTrigger>
                     <TabsTrigger value="courses" onClick={() => navigateTo("courses")}>Offered Courses</TabsTrigger>

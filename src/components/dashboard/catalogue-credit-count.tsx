@@ -14,7 +14,7 @@ export default function CatalogueCreditCount(
     }
 
     return (
-        <div className="flex items-center space-x-4 text-sm px-4 mb-4">
+        <div className="flex items-center space-x-4 text-sm max-md:text-xs max-md:flex-col justify-start px-4 mb-4">
             {
                 catalogue === "all" || catalogue === "requirements" ?
                     <>

@@ -1,5 +1,5 @@
 `irasx` is a [React JS](https://react.dev/) based CSR app, focusing on modern style and ease of use.
-Leveraging the APIs utilized by [iras](http://www.irasv1.iub.edu.bd/#/) it seamlessly retrieves data for enhanced functionality. It is worth noting that the app is not currently compatible with mobile screens. Checkout the deployed version of [irasx](https://irasx.vercel.app/).
+Leveraging the APIs utilized by [iras](http://www.irasv1.iub.edu.bd/#/) it seamlessly retrieves data for enhanced functionality. Checkout the deployed version of [irasx](https://irasx.vercel.app/).
 
 <hr>
 

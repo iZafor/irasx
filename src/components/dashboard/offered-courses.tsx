@@ -20,6 +20,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { transformIntoPreRequisiteMap, transformIntoRequirementCatalogueMap } from "@/lib/utils";
 import CatalogueCreditCount from "./catalogue-credit-count";
 import RequirementCatalogueTable from "./requirement-catalogue-table";
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+
 
 const allOfferedCourses: OfferedCourse[] = [];
 const allFoundationCourseCatalogue: CourseCatalogue[] = [];
@@ -134,7 +142,7 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
     return (
         <div className="rounded-md border">
             <div className="flex p-4 pb-0 mb-4 justify-between">
-                <Tabs defaultValue={catalogue || "all"}>
+                <Tabs defaultValue={catalogue || "all"} className="max-md:hidden">
                     <TabsList>
                         <TabsTrigger value="all" onClick={() => navigateTo("all")}>All</TabsTrigger>
                         <TabsTrigger value="Foundation" onClick={() => navigateTo("Foundation")}>Foundation</TabsTrigger>
@@ -145,9 +153,29 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                         </TabsTrigger>
                     </TabsList>
                 </Tabs>
+                <NavigationMenu className="md:hidden">
+                    <NavigationMenuList>
+                        <NavigationMenuItem>
+                            <NavigationMenuTrigger className="pl-0">{`${catalogue?.charAt(0).toUpperCase()}${catalogue?.substring(1)}`}</NavigationMenuTrigger>
+                            <NavigationMenuContent>
+                                <Tabs defaultValue={catalogue || "all"}>
+                                    <TabsList className="flex-col h-30">
+                                        <TabsTrigger className="w-full" value="all" onClick={() => navigateTo("all")}>All</TabsTrigger>
+                                        <TabsTrigger className="w-full" value="Foundation" onClick={() => navigateTo("Foundation")}>Foundation</TabsTrigger>
+                                        <TabsTrigger className="w-full" value="Major" onClick={() => navigateTo("Major")}>Major</TabsTrigger>
+                                        <TabsTrigger className="w-full" value="Minor" onClick={() => navigateTo("Minor")}>Minor</TabsTrigger>
+                                        <TabsTrigger className="w-full" value="requirements" onClick={() => navigateTo("requirements")}>
+                                            Requirements
+                                        </TabsTrigger>
+                                    </TabsList>
+                                </Tabs>
+                            </NavigationMenuContent>
+                        </NavigationMenuItem>
+                    </NavigationMenuList>
+                </NavigationMenu>
                 {
                     catalogue !== "requirements" &&
-                    <Input className="w-30" placeholder="Search here..." onChange={handleSearch} />
+                    <Input className={`w-30 max-md:w-[${catalogue === "Foundation" ? "5" : "8"}rem]`} placeholder="Search here..." onChange={handleSearch} />
                 }
             </div>
             <CatalogueCreditCount

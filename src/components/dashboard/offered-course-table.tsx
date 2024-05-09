@@ -46,7 +46,7 @@ export default function OfferedCourseTable(
     return (
         <>
             <div className="flex w-full justify-between items-center p-4">
-                <span className="space-x-2">
+                <span className="flex items-center justify-start gap-2">
                     <input type="checkbox" id="selectAll" onChange={handleSelectAll} />
                     <label htmlFor="selectAll">Select All</label>
                 </span>
@@ -62,54 +62,56 @@ export default function OfferedCourseTable(
                     }
                 />
             </div>
-            <ScrollArea className="h-[28rem]">
-                <div className="p-4 pl-2">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[8rem]">COURSE</TableHead>
-                                <TableHead className="w-[16rem]">TITLE</TableHead>
-                                <TableHead className="w-[5rem]">SECTION</TableHead>
-                                <TableHead className="w-[5rem]">ENROLLED</TableHead>
-                                <TableHead className="w-[5rem]">VACANCY</TableHead>
-                                <TableHead className="w-[8rem]">TIME SLOT</TableHead>
-                                <TableHead className="w-[15rem]">FACULTY</TableHead>
-                                <TableHead className="w-[9rem]">PRE-REQUISITES</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {
-                                offeredCourses.map((row, idx) => (
-                                    <TableRow key={row.courseId + idx}>
-                                        <TableCell>
-                                            <span className="flex items-center justify-start gap-2">
-                                                <input
-                                                    type="checkbox"
-                                                    onChange={handleClick}
-                                                    checked={checkedArray[idx]}
-                                                    name={`${idx}-chk`}
-                                                />
-                                                <p className="">
-                                                    {row.courseId}
-                                                </p>
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>{row.courseName}</TableCell>
-                                        <TableCell>{row.section}</TableCell>
-                                        <TableCell>{row.enrolled}</TableCell>
-                                        <TableCell>{row.vacancy}</TableCell>
-                                        <TableCell>{row.timeSlot}</TableCell>
-                                        <TableCell>{row.facualtyName}</TableCell>
-                                        <TableCell>
-                                            <PreRequisites courseId={row.courseId} preRequisiteMap={preRequisiteMap} />
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            }
-                        </TableBody>
-                    </Table>
-                </div>
-            </ScrollArea>
+            <div className="max-md:overflow-x-scroll">
+                <ScrollArea className="h-[28rem] lg:text-sm max-md:w-[75rem] max-md:h-[22rem]">
+                    <div className="p-4 pl-2">
+                        <Table className="text-xs">
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[8rem]">COURSE</TableHead>
+                                    <TableHead className="w-[16rem]">TITLE</TableHead>
+                                    <TableHead className="w-[5rem]">SECTION</TableHead>
+                                    <TableHead className="w-[5rem]">ENROLLED</TableHead>
+                                    <TableHead className="w-[5rem]">VACANCY</TableHead>
+                                    <TableHead className="w-[8rem]">TIME SLOT</TableHead>
+                                    <TableHead className="w-[15rem]">FACULTY</TableHead>
+                                    <TableHead className="w-[9rem]">PRE-REQUISITES</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {
+                                    offeredCourses.map((row, idx) => (
+                                        <TableRow key={row.courseId + idx}>
+                                            <TableCell>
+                                                <span className="flex items-center justify-start gap-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        onChange={handleClick}
+                                                        checked={checkedArray[idx]}
+                                                        name={`${idx}-chk`}
+                                                    />
+                                                    <p className="">
+                                                        {row.courseId}
+                                                    </p>
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>{row.courseName}</TableCell>
+                                            <TableCell>{row.section}</TableCell>
+                                            <TableCell>{row.enrolled}</TableCell>
+                                            <TableCell>{row.vacancy}</TableCell>
+                                            <TableCell>{row.timeSlot}</TableCell>
+                                            <TableCell>{row.facualtyName}</TableCell>
+                                            <TableCell>
+                                                <PreRequisites courseId={row.courseId} preRequisiteMap={preRequisiteMap} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </div>
+                </ScrollArea>
+            </div>
         </>
     );
 }

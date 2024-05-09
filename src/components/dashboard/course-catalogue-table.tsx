@@ -27,38 +27,40 @@ export default function CatalogueTable(
                     }
                 />
             </div>
-            <ScrollArea className="h-[28rem]">
-                <div className="p-4 pl-2">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="w-[5rem]">COURSE</TableHead>
-                                <TableHead className="w-[16rem]">TITLE</TableHead>
-                                <TableHead className="w-[7rem]">CREDIT HOUR</TableHead>
-                                <TableHead className="w-[18rem]">COURSE GROUP</TableHead>
-                                <TableHead className="w-[7rem]">PRE-REQUISITES</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {
-                                courseCatalogue.map(course => (
-                                    <TableRow key={course.courseId}>
-                                        <TableCell>{course.courseId}</TableCell>
-                                        <TableCell>{course.courseName}</TableCell>
-                                        <TableCell>{course.createHour}</TableCell>
-                                        <TableCell>{course.courseGroupName}</TableCell>
-                                        <TableCell>
-                                            {
-                                                <PreRequisites courseId={course.courseId} preRequisiteMap={preRequisiteMap} />
-                                            }
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            }
-                        </TableBody>
-                    </Table>
-                </div>
-            </ScrollArea>
+            <div className="max-md:overflow-x-scroll">
+                <ScrollArea className="h-[28rem] lg:text-sm max-md:w-[55rem] max-md:h-[27rem]">
+                    <div className="p-4 pl-2">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead className="w-[5rem]">COURSE</TableHead>
+                                    <TableHead className="w-[16rem]">TITLE</TableHead>
+                                    <TableHead className="w-[7rem]">CREDIT HOUR</TableHead>
+                                    <TableHead className="w-[18rem]">COURSE GROUP</TableHead>
+                                    <TableHead className="w-[7rem]">PRE-REQUISITES</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {
+                                    courseCatalogue.map(course => (
+                                        <TableRow key={course.courseId}>
+                                            <TableCell>{course.courseId}</TableCell>
+                                            <TableCell>{course.courseName}</TableCell>
+                                            <TableCell>{course.createHour}</TableCell>
+                                            <TableCell>{course.courseGroupName}</TableCell>
+                                            <TableCell>
+                                                {
+                                                    <PreRequisites courseId={course.courseId} preRequisiteMap={preRequisiteMap} />
+                                                }
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </div>
+                </ScrollArea>
+            </div>
         </>
     );
 }

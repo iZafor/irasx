@@ -44,18 +44,20 @@ export default function Grades({ id, authToken }: { id: string; authToken: strin
             </div>
             {
                 !isLoading ?
-                    <ScrollArea className="h-[35rem]">
-                        <div className="p-4 pl-2">
-                            {result.keys.map((key) =>
-                                result[key].keys.map((year, idx) =>
-                                    <span key={year + "+" + idx}>
-                                        <SemesterTable key={`${key}-${year}`} res={result[key][year]} />
-                                        <Separator key={`${year}-${key}`} className="my-2" />
-                                    </span>
-                                ))}
-                            <CGPATable res={result} />
-                        </div>
-                    </ScrollArea>
+                    <div className="max-md:overflow-x-scroll">
+                        <ScrollArea className="h-[35rem] max-md:w-[40rem]">
+                            <div className="p-4 pl-2">
+                                {result.keys.map((key) =>
+                                    result[key].keys.map((year, idx) =>
+                                        <span key={year + "+" + idx}>
+                                            <SemesterTable key={`${key}-${year}`} res={result[key][year]} />
+                                            <Separator key={`${year}-${key}`} className="my-2" />
+                                        </span>
+                                    ))}
+                                <CGPATable res={result} />
+                            </div>
+                        </ScrollArea>
+                    </div>
                     :
                     <TableSkeleton />
             }
