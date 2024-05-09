@@ -175,7 +175,7 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                 </NavigationMenu>
                 {
                     catalogue !== "requirements" &&
-                    <Input className={`w-30 max-md:w-[${catalogue === "Foundation" ? "5" : "8"}rem]`} placeholder="Search here..." onChange={handleSearch} />
+                    <Input className={`w-30 max-sm:w-[7rem]`} placeholder="Search here..." onChange={handleSearch} />
                 }
             </div>
             <CatalogueCreditCount
