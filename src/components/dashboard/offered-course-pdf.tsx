@@ -43,7 +43,7 @@ export default function OfferedCoursePdf(
                     <Separator />
                     <TableCellText className="w-[5rem]" text="VACANCY" />
                     <Separator />
-                    <TableCellText className="w-[10rem]" text="TIME SLOT" />
+                    <TableCellText className="w-[12rem]" text="TIME SLOT" />
                     <Separator />
                     <TableCellText className="w-[18rem]" text="FACULTY" />
                     <Separator />
@@ -62,7 +62,7 @@ export default function OfferedCoursePdf(
                             <Separator />
                             <TableCellText className="w-[5rem]" text={offeredCourses[idx].vacancy} />
                             <Separator />
-                            <TableCellText className="w-[10rem]" text={offeredCourses[idx].timeSlot} />
+                            <TableCellText className="w-[12rem]" text={offeredCourses[idx].timeSlot} />
                             <Separator />
                             <TableCellText className="w-[18rem]" text={offeredCourses[idx].facualtyName} />
                             <Separator />

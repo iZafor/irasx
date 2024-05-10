@@ -73,7 +73,7 @@ export default function OfferedCourseTable(
                                     <TableHead className="w-[5rem]">SECTION</TableHead>
                                     <TableHead className="w-[5rem]">ENROLLED</TableHead>
                                     <TableHead className="w-[5rem]">VACANCY</TableHead>
-                                    <TableHead className="w-[8rem]">TIME SLOT</TableHead>
+                                    <TableHead className="w-[10rem]">TIME SLOT</TableHead>
                                     <TableHead className="w-[15rem]">FACULTY</TableHead>
                                     <TableHead className="w-[9rem]">PRE-REQUISITES</TableHead>
                                 </TableRow>

@@ -156,5 +156,20 @@ export function mapSemester(semester: string) {
 }
 
 export function arrayOfSize(size: number) {
-    return Array.from({length: size}, () => 0);
+    return Array.from({ length: size }, () => 0);
+}
+
+export function formatTimeSlot(timeStr: string) {
+    const splitted = timeStr.split(" ");
+    const times = splitted[1].split("-");
+    const startHour = Number(times[0].substring(0, 2));
+    const endHour = Number(times[1].substring(0, 2));
+
+    times[0] = startHour < 13 ? `${startHour}:${times[0].substring(2)}` : `${startHour - 12}:${times[0].substring(2)}`;
+    times[1] = endHour < 13 ? `${endHour}:${times[1].substring(2)}` : `${endHour - 12}:${times[1].substring(2)}`;
+
+    times[0] += startHour < 12 ? "AM" : "PM";
+    times[1] += endHour < 12 ? "AM" : "PM";
+
+    return `${splitted[0]} ${times.join("-")}`;
 }

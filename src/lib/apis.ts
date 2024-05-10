@@ -6,6 +6,7 @@ import {
     CourseCatalogue,
     RequirementCatalogue
 } from "./definition";
+import { formatTimeSlot } from "./utils";
 
 export async function login(data: AuthData) {
     return fetch(
@@ -50,7 +51,10 @@ export async function getOfferedCourses(id: string, authToken: string) {
                 }
             }
         ).then(res => res.json());
-        return res.data.eligibleOfferCourses;
+        return res.data.eligibleOfferCourses.map(course => {
+            course.timeSlot = formatTimeSlot(course.timeSlot);
+            return course
+        });
     } catch (error) {
         console.error(error);
     }
