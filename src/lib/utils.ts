@@ -156,8 +156,5 @@ export function mapSemester(semester: string) {
 }
 
 export function arrayOfSize(size: number) {
-    const res = [];
-    res[size - 1] = 0;
-    res.fill(0);
-    return res;
+    return Array.from({length: size}, () => 0);
 }
