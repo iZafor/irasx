@@ -18,12 +18,10 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function validateStoredAuthData() {
-    const data: string | null = localStorage.getItem(STORED_AUTH_DATA_KEY);
-    if (data === null) {
+export function validateStoredAuthData(authData: StoredAuthData) {
+    if (!authData) {
         return false;
     }
-    const authData: StoredAuthData = JSON.parse(data);
     const res =
         Date.parse(
             authData.data.data?.[0]?.["expires"] || new Date().toUTCString()

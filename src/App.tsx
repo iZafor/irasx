@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Login from "./login";
-import { validateStoredAuthData } from "./lib/utils";
+import { getStoredAuthData, validateStoredAuthData } from "./lib/utils";
 import { redirect } from "react-router-dom";
 import Dashboard from "./dashboard";
 
@@ -9,7 +9,8 @@ const router = createBrowserRouter([
     path: "/",
     element: <Login />,
     loader: async () => {
-      if (validateStoredAuthData()) {
+      const authData = getStoredAuthData();
+      if (validateStoredAuthData(authData)) {
         return redirect("/dashboard");
       }
       return null;
@@ -19,10 +20,11 @@ const router = createBrowserRouter([
     path: "/dashboard/*",
     element: <Dashboard />,
     loader: async () => {
-      if (!validateStoredAuthData()) {
+      const authData = getStoredAuthData();
+      if (!validateStoredAuthData(authData)) {
         return redirect("/");
       }
-      return null;
+      return authData;
     }
   },
 ]);

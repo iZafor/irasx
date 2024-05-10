@@ -6,14 +6,11 @@ import {
     DropdownMenuItem
 } from "../ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
-import { STORED_AUTH_DATA_KEY } from "@/lib/definition";
-import { getStoredAuthData } from "@/lib/utils";
+import { STORED_AUTH_DATA_KEY, StoredAuthData } from "@/lib/definition";
 import { User } from "lucide-react";
 
-export default function UserMenu() {
+export default function UserMenu({ authData }: { authData: StoredAuthData }) {
     const navigate = useNavigate();
-    const authData = getStoredAuthData();
-
     function handleLogout() {
         localStorage.removeItem(STORED_AUTH_DATA_KEY);
         navigate("/", { replace: true });

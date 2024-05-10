@@ -1,14 +1,13 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Grades from "./grades";
-import { getStoredAuthData } from "@/lib/utils";
 import OfferedCourses from "./offered-courses";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { StoredAuthData } from "@/lib/definition";
 
-export default function DashboardTabs() {
-    const storedAuthData = getStoredAuthData();
-    const id = storedAuthData.id;
-    const authToken = storedAuthData.data.data?.[0]?.["access_token"] || "";
+export default function DashboardTabs({ authData }: { authData: StoredAuthData }) {
+    const id = authData.id;
+    const authToken = authData.data.data?.[0]?.["access_token"] || "";
 
     const [params] = useSearchParams();
     const query = params.get("tab");
