@@ -19,7 +19,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function validateStoredAuthData(authData: StoredAuthData) {
-    if (!authData) {
+    if (authData.data === undefined) {
         return false;
     }
     const res =

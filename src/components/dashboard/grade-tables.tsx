@@ -13,9 +13,11 @@ import { mapGradePoint, mapSemester } from "@/lib/utils";
 export function SemesterTable({ res }: { res: SemesterResult[] }) {
     let totalGrade = 0, totalCredit = 0;
     for (const course of res) {
-        const credit = course.courseId.endsWith("L") ? 1 : 3;
-        totalCredit += credit;
-        totalGrade += mapGradePoint(course.grade) * credit;
+        if(!["I", "W", "S", "U", "O", "Y", "Z"].some(grade => course.grade === grade)) {
+            const credit = course.courseId.endsWith("L") ? 1 : 3;
+            totalCredit += credit;
+            totalGrade += mapGradePoint(course.grade) * credit;
+        }
     }
     const gpa = (totalGrade / totalCredit || 1).toFixed(2);
 
@@ -65,9 +67,11 @@ export function CGPATable({ res }: { res: Result }) {
 
     let totalGrade = 0, totalCredit = 0;
     for (const course of finalRes.values()) {
-        const credit = course.courseId.endsWith("L") ? 1 : 3;
-        totalCredit += credit;
-        totalGrade += mapGradePoint(course.grade) * credit;
+        if(!["I", "W", "S", "U", "O", "Y", "Z"].some(grade => course.grade === grade)) {
+            const credit = course.courseId.endsWith("L") ? 1 : 3;
+            totalCredit += credit;
+            totalGrade += mapGradePoint(course.grade) * credit;
+        }
     }
 
     const cgpa = (totalGrade / totalCredit || 1).toFixed(2);
