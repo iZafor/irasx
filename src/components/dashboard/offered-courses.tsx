@@ -177,7 +177,8 @@ export default function OfferedCourses({ id, authToken }: { id: string; authToke
                         {
                             catalogue === "All" ?
                                 <OfferedCourseTable
-                                    offeredCourses={offeredCourses}
+                                    allOfferedCourses={AllOfferedCourses}
+                                    filteredOfferedCourses={offeredCourses}
                                     preRequisiteMap={preRequisiteMap}
                                 />
                                 :

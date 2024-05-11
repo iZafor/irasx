@@ -11,19 +11,14 @@ import {
 import { OfferedCourse, PreRequisiteMap } from "@/lib/definition";
 
 interface OfferedCoursePdfProps {
-    checkedArray: boolean[];
+    checkedMap: { [key: string]: boolean };
     offeredCourses: OfferedCourse[];
     preRequisiteMap: PreRequisiteMap;
 }
 
 export default function OfferedCoursePdf(
-    { checkedArray, offeredCourses, preRequisiteMap }: OfferedCoursePdfProps) {
-    const selectedIndices: number[] = [];
-    for (let i = 0; i < checkedArray.length; i++) {
-        if (checkedArray[i]) {
-            selectedIndices.push(i);
-        }
-    }
+    { checkedMap, offeredCourses, preRequisiteMap }: OfferedCoursePdfProps) {
+    const selectedCourses = offeredCourses.filter(course => checkedMap[course.courseId]);
 
     return (
         <Document pageMode="fullScreen">
@@ -50,28 +45,28 @@ export default function OfferedCoursePdf(
                     <TableCellText text="PRE-REQUISITES" />
                 </TableHeader>
                 {
-                    selectedIndices.map((idx, sIdx) =>
-                        <TableRow key={`${idx}-${sIdx}`} className={`top-[-${sIdx + 1}]`}>
-                            <TableCellText className="w-[5rem]" text={offeredCourses[idx].courseId} />
+                    selectedCourses.map((course, sIdx) =>
+                        <TableRow key={`${course.courseId}-${sIdx}`} className={`top-[-${sIdx + 1}]`}>
+                            <TableCellText className="w-[5rem]" text={course.courseId} />
                             <Separator />
-                            <TableCellText className="w-[18rem]" text={offeredCourses[idx].courseName} />
+                            <TableCellText className="w-[18rem]" text={course.courseName} />
                             <Separator />
-                            <TableCellText className="w-[5rem]" text={offeredCourses[idx].section} />
+                            <TableCellText className="w-[5rem]" text={course.section} />
                             <Separator />
-                            <TableCellText className="w-[6rem]" text={offeredCourses[idx].enrolled} />
+                            <TableCellText className="w-[6rem]" text={course.enrolled} />
                             <Separator />
-                            <TableCellText className="w-[5rem]" text={offeredCourses[idx].vacancy} />
+                            <TableCellText className="w-[5rem]" text={course.vacancy} />
                             <Separator />
-                            <TableCellText className="w-[12rem]" text={offeredCourses[idx].timeSlot} />
+                            <TableCellText className="w-[12rem]" text={course.timeSlot} />
                             <Separator />
-                            <TableCellText className="w-[18rem]" text={offeredCourses[idx].facualtyName} />
+                            <TableCellText className="w-[18rem]" text={course.facualtyName} />
                             <Separator />
                             <TableCellView className="m-2 mt-3 flex flex-row gap-4 flex-[1_1_1] flex-wrap justify-center">
                                 {
-                                    preRequisiteMap[offeredCourses[idx].courseId]
+                                    preRequisiteMap[course.courseId]
                                         ?.preRequisites.map((pre, pIdx) => (
                                             <PreRequisite
-                                                key={`${idx}-${pIdx}-${pre.courseId}`}
+                                                key={`${course.courseId}-${pIdx}-${pre.courseId}`}
                                                 text={pre.courseId}
                                                 status={pre.status}
                                             />

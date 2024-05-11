@@ -7,41 +7,54 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { OfferedCourse, PreRequisiteMap } from "@/lib/definition";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OfferedCoursePdf from "./offered-course-pdf";
 import { PDfDownloadButton } from "../pdf";
 import { ScrollArea } from "../ui/scroll-area";
 
+const checkedMap: { [key: string]: boolean } = {};
+
 interface OfferedCourseTableProps {
-    offeredCourses: OfferedCourse[];
+    allOfferedCourses: OfferedCourse[];
+    filteredOfferedCourses: OfferedCourse[];
     preRequisiteMap: PreRequisiteMap;
 }
 
 export default function OfferedCourseTable(
-    { offeredCourses, preRequisiteMap }: OfferedCourseTableProps) {
+    { allOfferedCourses, filteredOfferedCourses, preRequisiteMap }: OfferedCourseTableProps) {
 
-    const [checkedArray, setCheckedArray] = useState(Array.from({ length: offeredCourses.length }, () => false));
-    const [exportDisable, setExportDisable] = useState(true);
+    const [checkedArray, setCheckedArray] = useState(Array.from({ length: filteredOfferedCourses.length }, () => false));
+    const [disableExport, setDisableExport] = useState(true);
+
+    function updateCheckedArray() {
+        console.log(checkedMap);
+        filteredOfferedCourses.forEach((course, idx) => {
+            if (checkedMap[course.courseId]) {
+                checkedArray[idx] = true;
+            } else {
+                checkedArray[idx] = false;
+            }
+        });
+        setCheckedArray(checkedArray.slice());
+    }
 
     function handleClick(ev: React.ChangeEvent<HTMLInputElement>) {
-        const { checked: newState, name } = ev.currentTarget;
-        const courseId = offeredCourses[parseInt(name)].courseId;
-        const firstIdx = offeredCourses.findIndex(oc => oc.courseId.indexOf(courseId) !== -1);
-        for (let i = firstIdx; i < checkedArray.length; i++) {
-            if (offeredCourses[i].courseCode.indexOf(courseId) === -1) {
-                break;
-            }
-            checkedArray[i] = newState;
-        }
-        setExportDisable(!checkedArray.some(chk => chk));
-        setCheckedArray(checkedArray.slice());
+        const { checked: newState, name: courseId }: { checked: boolean; name: string; } = ev.currentTarget;
+        checkedMap[courseId] = newState;
+        setDisableExport(!checkedArray.some(chk => chk));
+        updateCheckedArray();
     }
 
     function handleSelectAll(ev: React.ChangeEvent<HTMLInputElement>) {
         const { checked } = ev.currentTarget;
-        setCheckedArray(Array.from({ length: checkedArray.length }, () => checked));
-        setExportDisable(!checked);
+        filteredOfferedCourses.forEach(course => checkedMap[course.courseId] = checked);
+        setDisableExport(!checked);
+        updateCheckedArray();
     }
+
+    useEffect(() => {
+        updateCheckedArray();
+    }, [filteredOfferedCourses]);
 
     return (
         <>
@@ -52,11 +65,11 @@ export default function OfferedCourseTable(
                 </span>
                 <PDfDownloadButton
                     fileName="offered_courses"
-                    disabled={exportDisable}
+                    disabled={disableExport}
                     pdfDocument={
                         <OfferedCoursePdf
-                            checkedArray={checkedArray}
-                            offeredCourses={offeredCourses}
+                            checkedMap={checkedMap}
+                            offeredCourses={allOfferedCourses}
                             preRequisiteMap={preRequisiteMap}
                         />
                     }
@@ -80,7 +93,7 @@ export default function OfferedCourseTable(
                             </TableHeader>
                             <TableBody>
                                 {
-                                    offeredCourses.map((row, idx) => (
+                                    filteredOfferedCourses.map((row, idx) => (
                                         <TableRow key={row.courseId + idx}>
                                             <TableCell>
                                                 <span className="flex items-center justify-start gap-2">
@@ -88,7 +101,7 @@ export default function OfferedCourseTable(
                                                         type="checkbox"
                                                         onChange={handleClick}
                                                         checked={checkedArray[idx]}
-                                                        name={`${idx}-chk`}
+                                                        name={`${row.courseId}`}
                                                     />
                                                     <p className="">
                                                         {row.courseId}
