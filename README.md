@@ -33,4 +33,4 @@ npm install
 npm run dev
 ```
 
-`Note:` Since the APIs are accessible through browser dev tools, I can't take responsibility for potential cyber attacks. Essentially, it's just a layer over the original APIs.
+`Note:` Due to CORS restriction current version of the project is unusable. 
