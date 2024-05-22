@@ -6,9 +6,8 @@ import {
     PrerequisiteCourse,
     CourseCatalogue,
     RequirementCatalogue,
-    CourseCataloguePrimitive,
 } from "./definition";
-import { formatTimeSlot, generateCourseArray, transformIntoPrerequisiteMap } from "./utils";
+import { formatTimeSlot } from "./utils";
 
 export async function getGrades(id: string, authToken: string) {
     try {
@@ -118,42 +117,6 @@ export async function getRequirementCatalogues(id: string, authToken: string) {
             }
         ).then((res) => res.json());
         return res.data;
-    } catch (error) {
-        console.error(error);
-    }
-    return [];
-}
-
-export async function getCourses(id: string, authToken: string) {
-    try {
-        const [
-            offeredCourses,
-            foundationCatalogue,
-            majorCatalogue,
-            minorCatalogue,
-            prerequisiteCourses,
-            requirementCatalogues
-        ] = await Promise.all([
-            getOfferedCourses(id, authToken),
-            getCourseCatalogue(id, authToken, "Foundation"),
-            getCourseCatalogue(id, authToken, "Major"),
-            getCourseCatalogue(id, authToken, "Minor"),
-            getPrerequisiteCourses(id, authToken),
-            getRequirementCatalogues(id, authToken)
-        ]);
-        const prerequisiteMap = transformIntoPrerequisiteMap(prerequisiteCourses, offeredCourses);
-        const catalogues: CourseCataloguePrimitive[] = [
-            { catalogId: foundationCatalogue[0].catalogId, catalogName: "Foundation" },
-            { catalogId: majorCatalogue[0].catalogId, catalogName: "Major" },
-            { catalogId: minorCatalogue[0].catalogId, catalogName: "Minor" },
-        ];
-        const courses = generateCourseArray(
-            offeredCourses,
-            requirementCatalogues,
-            prerequisiteMap,
-            catalogues
-        );
-        return courses;
     } catch (error) {
         console.error(error);
     }

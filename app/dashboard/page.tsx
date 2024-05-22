@@ -4,11 +4,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import FilterMenu from "@/components/ui/dashboard/filter-menu";
-import { Course, STORED_AUTH_DATA_KEY } from "@/lib/definition";
+import { Course, CourseCataloguePrimitive, STORED_AUTH_DATA_KEY } from "@/lib/definition";
 import { ChangeEvent, useEffect, useState } from "react";
-import { getStoredAuthData, validateStoredAuthData } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { getCourses } from "@/lib/apis";
+import {
+    generateCourseArray,
+    getStoredAuthData,
+    transformIntoPrerequisiteMap,
+    validateStoredAuthData
+} from "@/lib/utils";
+import { redirect } from "next/navigation";
+import {
+    getCourseCatalogue,
+    getOfferedCourses,
+    getPrerequisiteCourses,
+    getRequirementCatalogues
+} from "@/lib/apis";
 import CourseCardSkeleton from "@/components/ui/dashboard/course-card-skeleton";
 import CourseList from "@/components/ui/dashboard/course-list";
 
@@ -17,7 +27,6 @@ const allCourses: Course[] = [];
 export default function Dashboard() {
     const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const router = useRouter();
 
     function handleSearch(ev: ChangeEvent<HTMLInputElement>) {
         const term = ev.target.value.toLowerCase().trim();
@@ -33,17 +42,43 @@ export default function Dashboard() {
     useEffect(() => {
         const authData = getStoredAuthData();
         if (!validateStoredAuthData(authData)) {
-            router.push("/");
-            return;
+            redirect("/");
         }
 
         const logoutUser = setTimeout(() => {
             localStorage.removeItem(STORED_AUTH_DATA_KEY);
-            router.push("/");
+            redirect("/");
         }, Date.parse(authData.expiry) - Date.now());
 
         async function fetchData() {
-            const courses = await getCourses(authData.studentId, authData.authToken);
+            const { studentId, authToken } = authData;
+            const [
+                offeredCourses,
+                foundationCatalogue,
+                majorCatalogue,
+                minorCatalogue,
+                prerequisiteCourses,
+                requirementCatalogues
+            ] = await Promise.all([
+                getOfferedCourses(studentId, authToken),
+                getCourseCatalogue(studentId, authToken, "Foundation"),
+                getCourseCatalogue(studentId, authToken, "Major"),
+                getCourseCatalogue(studentId, authToken, "Minor"),
+                getPrerequisiteCourses(studentId, authToken),
+                getRequirementCatalogues(studentId, authToken)
+            ]);
+            const prerequisiteMap = transformIntoPrerequisiteMap(prerequisiteCourses, offeredCourses);
+            const catalogues: CourseCataloguePrimitive[] = [
+                { catalogId: foundationCatalogue[0].catalogId, catalogName: "Foundation" },
+                { catalogId: majorCatalogue[0].catalogId, catalogName: "Major" },
+                { catalogId: minorCatalogue[0].catalogId, catalogName: "Minor" },
+            ];
+            const courses = generateCourseArray(
+                offeredCourses,
+                requirementCatalogues,
+                prerequisiteMap,
+                catalogues
+            );
             allCourses.length = 0;
             allCourses.push(...courses);
             setFilteredCourses(courses);
