@@ -9,13 +9,12 @@ import { authenticateUser } from "@/lib/actions";
 import { useFormState } from "react-dom";
 import { cn, getStoredAuthData, validateStoredAuthData } from "@/lib/utils";
 import { STORED_AUTH_DATA_KEY } from "@/lib/definition";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 export function LoginForm() {
     const [state, action] = useFormState(authenticateUser, undefined);
     const [pending, setPending] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const router = useRouter();
 
     function handleLogin(ev: FormEvent<HTMLFormElement>) {
         ev.preventDefault();
@@ -26,14 +25,14 @@ export function LoginForm() {
 
     useEffect(() => {
         if (validateStoredAuthData(getStoredAuthData())) {
-            router.push("/dashboard");
+            redirect("/dashboard");
         }
     }, []);
 
     useEffect(() => {
         if (state?.authResponse) {
             localStorage.setItem(STORED_AUTH_DATA_KEY, JSON.stringify(state.authResponse));
-            router.push("/dashboard");
+            redirect("/dashboard");
         }
         setPending(false);
     }, [state]);
