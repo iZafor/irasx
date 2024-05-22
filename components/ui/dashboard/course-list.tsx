@@ -14,7 +14,7 @@ export default function CourseList({ courses }: { courses: Course[] }) {
                     if (entry.isIntersecting) {
                         const index = parseInt((entry.target as HTMLElement).dataset.index!, 10);
                         setLastVisibleItemIndex((prevIndex) =>
-                            index >= prevIndex ?
+                            index > prevIndex ?
                                 Math.max(prevIndex, index) : index);
                     }
                 });
@@ -35,7 +35,12 @@ export default function CourseList({ courses }: { courses: Course[] }) {
         const start = Math.max(0, lastVisibleItemIndex - 4);
         const end = Math.min(courses.length, lastVisibleItemIndex + 6);
         setVisibleItems(courses.slice(start, end));
-    }, [courses, lastVisibleItemIndex]);
+    }, [lastVisibleItemIndex]);
+
+    useEffect(() => {
+        setLastVisibleItemIndex(0);
+        setVisibleItems(courses.slice(0, 10));
+    }, [courses]);
 
     const setObserver = useCallback((node: Element) => {
         if (node !== null && observerRef.current) {
