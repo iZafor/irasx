@@ -20,15 +20,12 @@ export default function Dashboard() {
     const router = useRouter();
 
     function handleSearch(ev: ChangeEvent<HTMLInputElement>) {
-        const term = ev.target.value.toLowerCase();
+        const term = ev.target.value.toLowerCase().trim();
         setTimeout(() => {
             setFilteredCourses(allCourses.filter(course =>
                 course.courseId.toLowerCase().includes(term) ||
                 course.courseTitle.toLowerCase().includes(term) ||
-                course.faculty.toLowerCase().includes(term) ||
-                course.group.toLowerCase().includes(term) ||
-                course.category.toLowerCase().includes(term) ||
-                course.catalogue.toLowerCase().includes(term)
+                course.faculty.toLowerCase().includes(term)
             ));
         }, 100);
     }
