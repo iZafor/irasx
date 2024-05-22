@@ -15,7 +15,7 @@ export default function CourseList({ courses }: { courses: Course[] }) {
                         const index = parseInt((entry.target as HTMLElement).dataset.index!, 10);
                         setLastVisibleItemIndex((prevIndex) =>
                             index >= prevIndex ?
-                                Math.max(prevIndex, index) : Math.max(0, index - 6));
+                                Math.max(prevIndex, index) : index);
                     }
                 });
             },
