@@ -27,16 +27,123 @@ const allCourses: Course[] = [];
 export default function Dashboard() {
     const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [optionGroups, setOptionGroups] = useState<{ [key: string]: string }>({});
+    const [optionStates, setOptionStates] = useState<{ [key: string]: boolean }>({});
+
+    function matchGroups(groups: string[], course: Course) {
+        let res = false;
+        for (const group of groups) {
+            switch (group) {
+                case "Catalogue":
+                    res = optionStates[course.catalogue];
+                    break;
+                case "Category":
+                    res = optionStates[course.category];
+                    break;
+                case "Group":
+                    res = optionStates[course.group];
+                    break;
+                case "Type":
+                    res = optionStates[course.type];
+                    break;
+            }
+            if (!res) return false;
+        }
+        return true;
+    }
 
     function handleSearch(ev: ChangeEvent<HTMLInputElement>) {
         const term = ev.target.value.toLowerCase().trim();
+        setSearchTerm(term);
         setTimeout(() => {
-            setFilteredCourses(allCourses.filter(course =>
-                course.courseId.toLowerCase().includes(term) ||
-                course.courseTitle.toLowerCase().includes(term) ||
-                course.faculty.toLowerCase().includes(term)
-            ));
+            if (Object.values(optionStates).some(state => state)) {
+                const selectedGroups = Object
+                    .entries(optionStates)
+                    .filter(([_, state]) => state)
+                    .map(([opt, _]) => optionGroups[opt]);
+
+                setFilteredCourses(allCourses.filter(course =>
+                    matchGroups(selectedGroups, course)
+                    && (course.courseId.toLowerCase().includes(term)
+                        || course.courseTitle.toLowerCase().includes(term)
+                        || course.faculty.toLowerCase().includes(term))
+                ));
+            } else {
+                setFilteredCourses(allCourses.filter(course =>
+                    course.courseId.toLowerCase().includes(term)
+                    || course.courseTitle.toLowerCase().includes(term)
+                    || course.faculty.toLowerCase().includes(term)
+                ));
+            }
         }, 100);
+    }
+
+    function handleOptionStateUpdate(option: string, state: boolean) {
+        let newOptionStates: { [key: string]: boolean } = {};
+        let newFilteredCourses: Course[] = [];
+        if (option === "Clear") {
+            Object.keys(optionStates).forEach(key => newOptionStates[key] = false);
+        } else {
+            newOptionStates = { ...optionStates, [option]: state };
+        }
+
+        if (Object.values(newOptionStates).every(st => !st)) {
+            newFilteredCourses = [...allCourses];
+        } else {
+            switch (optionGroups[option] || "") {
+                case "Catalogue":
+                    if (state) {
+                        newFilteredCourses = filteredCourses.filter(course => course.catalogue === option);
+                    } else {
+                        newFilteredCourses = allCourses.filter(course =>
+                            optionStates[course.category]
+                            || optionStates[course.group]
+                            || optionStates[course.type]
+                        );
+                    }
+                    break;
+                case "Category":
+                    if (state) {
+                        newFilteredCourses = filteredCourses.filter(course => course.category === option);
+                    } else {
+                        newFilteredCourses = allCourses.filter(course =>
+                            optionStates[course.catalogue]
+                            || optionStates[course.group]
+                            || optionStates[course.type]
+                        );
+                    }
+                    break;
+                case "Group":
+                    if (state) {
+                        newFilteredCourses = filteredCourses.filter(course => course.group === option);
+                    } else {
+                        newFilteredCourses = allCourses.filter(course =>
+                            optionStates[course.catalogue]
+                            || optionStates[course.category]
+                            || optionStates[course.type]
+                        );
+                    }
+                    break;
+                case "Type":
+                    if (state) {
+                        newFilteredCourses = filteredCourses.filter(course => course.type === option);
+                    } else {
+                        newFilteredCourses = allCourses.filter(course =>
+                            optionStates[course.catalogue]
+                            || optionStates[course.category]
+                            || optionStates[course.group]
+                        );
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        setSearchTerm("");
+        setOptionStates(newOptionStates);
+        setFilteredCourses(newFilteredCourses);
     }
 
     useEffect(() => {
@@ -81,6 +188,21 @@ export default function Dashboard() {
             );
             allCourses.length = 0;
             allCourses.push(...courses);
+            const newOptionGroups: { [key: string]: string } = {};
+            const newOptionStates: { [key: string]: boolean } = {};
+            courses.forEach(course => {
+                newOptionStates[course.catalogue] = false;
+                newOptionStates[course.category] = false;
+                newOptionStates[course.group] = false;
+                newOptionStates[course.type] = false;
+
+                newOptionGroups[course.catalogue] = "Catalogue";
+                newOptionGroups[course.category] = "Category";
+                newOptionGroups[course.group] = "Group";
+                newOptionGroups[course.type] = "Type";
+            });
+            setOptionStates(newOptionStates);
+            setOptionGroups(newOptionGroups);
             setFilteredCourses(courses);
             setIsLoading(false);
         }
@@ -103,10 +225,15 @@ export default function Dashboard() {
                             placeholder="Search here..."
                             className="text-base border-none focus-visible:ring-0"
                             autoComplete="off"
+                            value={searchTerm}
                             onChange={handleSearch}
                         />
                     </div>
-                    <FilterMenu />
+                    <FilterMenu
+                        courses={filteredCourses}
+                        optionStates={optionStates}
+                        updateOptionState={handleOptionStateUpdate}
+                    />
                 </div>
                 <ScrollArea className="h-[calc(100vh-12rem)]">
                     {isLoading ? (
