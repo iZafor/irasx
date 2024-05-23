@@ -99,11 +99,11 @@ export function LoginForm() {
                                     </div>
                                     {
                                         showPassword ?
-                                            <Eye
+                                            <EyeOff
                                                 className="cursor-pointer"
                                                 onClick={() => setShowPassword(false)}
                                             /> :
-                                            <EyeOff
+                                            <Eye
                                                 className="cursor-pointer"
                                                 onClick={() => setShowPassword(true)}
                                             />

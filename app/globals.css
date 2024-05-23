@@ -84,3 +84,17 @@
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px hsl(var(--background)) inset !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    animation-name: autofill;
+    animation-fill-mode: both;
+}
+
+@keyframes autofill {
+    0% {
+        color: white;
+        background: transparent;
+    }
+}
