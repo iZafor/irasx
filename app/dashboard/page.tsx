@@ -54,8 +54,9 @@ export default function Dashboard() {
     }
 
     function handleSearch(ev: ChangeEvent<HTMLInputElement>) {
-        const term = ev.target.value.toLowerCase().trim();
+        let term = ev.target.value;
         setSearchTerm(term);
+        term = term.trim().toLowerCase();
         setTimeout(() => {
             if (Object.values(optionStates).some(state => state)) {
                 const selectedGroups = Object
