@@ -19,7 +19,7 @@ export default function CourseList({ courses }: { courses: Course[] }) {
                     }
                 });
             },
-            { root: null, rootMargin: '0px', threshold: 0.5 }
+            { root: null, rootMargin: '0px', threshold: 0.9 }
         );
 
         observerRef.current = observer;

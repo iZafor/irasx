@@ -112,7 +112,7 @@ export function LoginForm() {
                                 {state?.errors?.password && <p className="text-base font-semibold text-red-500">{state.errors.password}</p>}
                             </div>
                         </div>
-                        <Button disabled={pending} className="text-base" type="submit">Submit</Button>
+                        <Button disabled={pending} className="text-base" type="submit">Login</Button>
                         {
                             state?.message &&
                             <div className="flex space-x-2">
