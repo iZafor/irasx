@@ -216,8 +216,8 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="p-4 w-full h-[calc(100vh-4rem)] grid place-items-center">
-            <div className="border rounded p-4 flex flex-col gap-4 w-[45rem] max-md:w-[40rem] max-sm:w-[98%]">
+        <div className="w-full h-[calc(100vh-4rem)] flex justify-center">
+            <div className="flex flex-col gap-4 w-[45rem] max-md:w-[40rem] max-sm:w-[94%]">
                 <div className="w-full flex gap-4 items-center justify-between">
                     <div className="h-10 border rounded flex items-center focus-within:ring-1 focus-within:ring-ring px-4">
                         <Search />
@@ -236,7 +236,7 @@ export default function Dashboard() {
                         updateOptionState={handleOptionStateUpdate}
                     />
                 </div>
-                <ScrollArea className="h-[calc(100vh-12rem)]">
+                <ScrollArea className="h-[calc(100vh-8rem)]">
                     {isLoading ? (
                         <div className="flex flex-col gap-4">
                             <CourseCardSkeleton />
