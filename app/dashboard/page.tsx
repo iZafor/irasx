@@ -109,11 +109,12 @@ export default function Dashboard() {
             if (searchTerm.length == 0) {
                 newFilteredCourses = [...allCourses];
             } else {
+                const term = searchTerm.trim().toLocaleLowerCase();
                 newFilteredCourses = allCourses.filter(
                     (course) =>
-                        course.courseId.toLowerCase().includes(searchTerm) ||
-                        course.courseTitle.toLowerCase().includes(searchTerm) ||
-                        course.faculty.toLowerCase().includes(searchTerm)
+                        course.courseId.toLowerCase().includes(term) ||
+                        course.courseTitle.toLowerCase().includes(term) ||
+                        course.faculty.toLowerCase().includes(term)
                 );
             }
         } else {
