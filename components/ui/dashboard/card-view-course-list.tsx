@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import CourseCard from "@/components/ui/dashboard/course-card";
-import { Course } from '@/lib/definition';
+import { Course } from "@/lib/definition";
 
-export default function CourseList({ courses }: { courses: Course[] }) {
+export default function CardViewCourseList({ courses }: { courses: Course[] }) {
     const [visibleItems, setVisibleItems] = useState<Course[]>([]);
     const [lastVisibleItemIndex, setLastVisibleItemIndex] = useState(0);
     const observerRef = useRef<IntersectionObserver | null>(null);
@@ -12,14 +12,19 @@ export default function CourseList({ courses }: { courses: Course[] }) {
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        const index = parseInt((entry.target as HTMLElement).dataset.index!, 10);
+                        const index = parseInt(
+                            (entry.target as HTMLElement).dataset.index!,
+                            10
+                        );
                         setLastVisibleItemIndex((prevIndex) =>
-                            index > prevIndex ?
-                                Math.max(prevIndex, index) : index);
+                            index > prevIndex
+                                ? Math.max(prevIndex, index)
+                                : index
+                        );
                     }
                 });
             },
-            { root: null, rootMargin: '0px', threshold: 0.9 }
+            { root: null, rootMargin: "0px", threshold: 0.9 }
         );
 
         observerRef.current = observer;

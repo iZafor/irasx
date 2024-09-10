@@ -1,26 +1,32 @@
 "use client";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search } from "lucide-react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { GalleryVertical, Search, Table } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import FilterMenu from "@/components/ui/dashboard/filter-menu";
-import { Course, CourseCataloguePrimitive, STORED_AUTH_DATA_KEY } from "@/lib/definition";
-import { ChangeEvent, useEffect, useState } from "react";
 import {
+    Course,
+    CourseCataloguePrimitive,
+    STORED_AUTH_DATA_KEY,
+} from "@/lib/definition";
+import { useEffect, useState } from "react";
+import {
+    cn,
     generateCourseArray,
     getStoredAuthData,
     transformIntoPrerequisiteMap,
-    validateStoredAuthData
+    validateStoredAuthData,
 } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import {
     getCourseCatalogue,
     getOfferedCourses,
     getPrerequisiteCourses,
-    getRequirementCatalogues
+    getRequirementCatalogues,
 } from "@/lib/apis";
 import CourseCardSkeleton from "@/components/ui/dashboard/course-card-skeleton";
-import CourseList from "@/components/ui/dashboard/course-list";
+import CardViewCourseList from "@/components/ui/dashboard/card-view-course-list";
+import TableViewCourseList from "@/components/ui/dashboard/table-view-course-list";
 
 const allCourses: Course[] = [];
 
@@ -30,6 +36,7 @@ export default function Dashboard() {
     const [searchTerm, setSearchTerm] = useState("");
     const [optionGroups, setOptionGroups] = useState<{ [key: string]: string }>({});
     const [optionStates, setOptionStates] = useState<{ [key: string]: boolean }>({});
+    const [view, setView] = useState<"table" | "card">("table");
 
     function matchGroups(groups: string[], course: Course) {
         let res = false;
@@ -53,29 +60,36 @@ export default function Dashboard() {
         return true;
     }
 
-    function handleSearch(ev: ChangeEvent<HTMLInputElement>) {
-        let term = ev.target.value;
+    function handleSearch(term: string) {
         setSearchTerm(term);
+
         term = term.trim().toLowerCase();
         setTimeout(() => {
-            if (Object.values(optionStates).some(state => state)) {
-                const selectedGroups = Object
-                    .entries(optionStates)
+            if (Object.values(optionStates).some((state) => state)) {
+                const selectedGroups = Object.entries(optionStates)
                     .filter(([_, state]) => state)
                     .map(([opt, _]) => optionGroups[opt]);
 
-                setFilteredCourses(allCourses.filter(course =>
-                    matchGroups(selectedGroups, course)
-                    && (course.courseId.toLowerCase().includes(term)
-                        || course.courseTitle.toLowerCase().includes(term)
-                        || course.faculty.toLowerCase().includes(term))
-                ));
+                setFilteredCourses(
+                    allCourses.filter(
+                        (course) =>
+                            matchGroups(selectedGroups, course) &&
+                            (course.courseId.toLowerCase().includes(term) ||
+                                course.courseTitle
+                                    .toLowerCase()
+                                    .includes(term) ||
+                                course.faculty.toLowerCase().includes(term))
+                    )
+                );
             } else {
-                setFilteredCourses(allCourses.filter(course =>
-                    course.courseId.toLowerCase().includes(term)
-                    || course.courseTitle.toLowerCase().includes(term)
-                    || course.faculty.toLowerCase().includes(term)
-                ));
+                setFilteredCourses(
+                    allCourses.filter(
+                        (course) =>
+                            course.courseId.toLowerCase().includes(term) ||
+                            course.courseTitle.toLowerCase().includes(term) ||
+                            course.faculty.toLowerCase().includes(term)
+                    )
+                );
             }
         }, 100);
     }
@@ -83,57 +97,78 @@ export default function Dashboard() {
     function handleOptionStateUpdate(option: string, state: boolean) {
         let newOptionStates: { [key: string]: boolean } = {};
         let newFilteredCourses: Course[] = [];
+
         if (option === "Clear") {
-            Object.keys(optionStates).forEach(key => newOptionStates[key] = false);
+            Object.keys(optionStates).forEach(
+                (key) => (newOptionStates[key] = false)
+            );
+
+            if (searchTerm.length == 0) {
+                newFilteredCourses = [...allCourses];
+            } else {
+                newFilteredCourses = allCourses.filter(
+                    (course) =>
+                        course.courseId.toLowerCase().includes(searchTerm) ||
+                        course.courseTitle.toLowerCase().includes(searchTerm) ||
+                        course.faculty.toLowerCase().includes(searchTerm)
+                );
+            }
         } else {
             newOptionStates = { ...optionStates, [option]: state };
-        }
-
-        if (Object.values(newOptionStates).every(st => !st)) {
-            newFilteredCourses = [...allCourses];
-        } else {
             switch (optionGroups[option] || "") {
                 case "Catalogue":
                     if (state) {
-                        newFilteredCourses = filteredCourses.filter(course => course.catalogue === option);
+                        newFilteredCourses = filteredCourses.filter(
+                            (course) => course.catalogue === option
+                        );
                     } else {
-                        newFilteredCourses = allCourses.filter(course =>
-                            optionStates[course.category]
-                            || optionStates[course.group]
-                            || optionStates[course.type]
+                        newFilteredCourses = allCourses.filter(
+                            (course) =>
+                                optionStates[course.category] ||
+                                optionStates[course.group] ||
+                                optionStates[course.type]
                         );
                     }
                     break;
                 case "Category":
                     if (state) {
-                        newFilteredCourses = filteredCourses.filter(course => course.category === option);
+                        newFilteredCourses = filteredCourses.filter(
+                            (course) => course.category === option
+                        );
                     } else {
-                        newFilteredCourses = allCourses.filter(course =>
-                            optionStates[course.catalogue]
-                            || optionStates[course.group]
-                            || optionStates[course.type]
+                        newFilteredCourses = allCourses.filter(
+                            (course) =>
+                                optionStates[course.catalogue] ||
+                                optionStates[course.group] ||
+                                optionStates[course.type]
                         );
                     }
                     break;
                 case "Group":
                     if (state) {
-                        newFilteredCourses = filteredCourses.filter(course => course.group === option);
+                        newFilteredCourses = filteredCourses.filter(
+                            (course) => course.group === option
+                        );
                     } else {
-                        newFilteredCourses = allCourses.filter(course =>
-                            optionStates[course.catalogue]
-                            || optionStates[course.category]
-                            || optionStates[course.type]
+                        newFilteredCourses = allCourses.filter(
+                            (course) =>
+                                optionStates[course.catalogue] ||
+                                optionStates[course.category] ||
+                                optionStates[course.type]
                         );
                     }
                     break;
                 case "Type":
                     if (state) {
-                        newFilteredCourses = filteredCourses.filter(course => course.type === option);
+                        newFilteredCourses = filteredCourses.filter(
+                            (course) => course.type === option
+                        );
                     } else {
-                        newFilteredCourses = allCourses.filter(course =>
-                            optionStates[course.catalogue]
-                            || optionStates[course.category]
-                            || optionStates[course.group]
+                        newFilteredCourses = allCourses.filter(
+                            (course) =>
+                                optionStates[course.catalogue] ||
+                                optionStates[course.category] ||
+                                optionStates[course.group]
                         );
                     }
                     break;
@@ -142,7 +177,6 @@ export default function Dashboard() {
             }
         }
 
-        setSearchTerm("");
         setOptionStates(newOptionStates);
         setFilteredCourses(newFilteredCourses);
     }
@@ -166,20 +200,32 @@ export default function Dashboard() {
                 majorCatalogue,
                 minorCatalogue,
                 prerequisiteCourses,
-                requirementCatalogues
+                requirementCatalogues,
             ] = await Promise.all([
                 getOfferedCourses(studentId, authToken),
                 getCourseCatalogue(studentId, authToken, "Foundation"),
                 getCourseCatalogue(studentId, authToken, "Major"),
                 getCourseCatalogue(studentId, authToken, "Minor"),
                 getPrerequisiteCourses(studentId, authToken),
-                getRequirementCatalogues(studentId, authToken)
+                getRequirementCatalogues(studentId, authToken),
             ]);
-            const prerequisiteMap = transformIntoPrerequisiteMap(prerequisiteCourses, offeredCourses);
+            const prerequisiteMap = transformIntoPrerequisiteMap(
+                prerequisiteCourses,
+                offeredCourses
+            );
             const catalogues: CourseCataloguePrimitive[] = [
-                { catalogId: foundationCatalogue[0].catalogId, catalogName: "Foundation" },
-                { catalogId: majorCatalogue[0].catalogId, catalogName: "Major" },
-                { catalogId: minorCatalogue[0].catalogId, catalogName: "Minor" },
+                {
+                    catalogId: foundationCatalogue[0].catalogId,
+                    catalogName: "Foundation",
+                },
+                {
+                    catalogId: majorCatalogue[0].catalogId,
+                    catalogName: "Major",
+                },
+                {
+                    catalogId: minorCatalogue[0].catalogId,
+                    catalogName: "Minor",
+                },
             ];
             const courses = generateCourseArray(
                 offeredCourses,
@@ -191,7 +237,7 @@ export default function Dashboard() {
             allCourses.push(...courses);
             const newOptionGroups: { [key: string]: string } = {};
             const newOptionStates: { [key: string]: boolean } = {};
-            courses.forEach(course => {
+            courses.forEach((course) => {
                 newOptionStates[course.catalogue] = false;
                 newOptionStates[course.category] = false;
                 newOptionStates[course.group] = false;
@@ -217,7 +263,12 @@ export default function Dashboard() {
 
     return (
         <div className="w-full h-[calc(100vh-4rem)] flex justify-center">
-            <div className="flex flex-col gap-4 w-[45rem] max-md:w-[40rem] max-sm:w-[94%]">
+            <div
+                className={cn(
+                    "flex flex-col gap-4 w-[45rem] max-md:w-[40rem] max-sm:w-[94%]",
+                    { "md:w-[84%]": view === "table" }
+                )}
+            >
                 <div className="w-full flex gap-4 items-center justify-between">
                     <div className="h-10 border rounded flex items-center focus-within:ring-1 focus-within:ring-ring px-4">
                         <Search />
@@ -227,14 +278,29 @@ export default function Dashboard() {
                             className="text-base border-none focus-visible:ring-0"
                             autoComplete="off"
                             value={searchTerm}
-                            onChange={handleSearch}
+                            onChange={(ev) => handleSearch(ev.target.value)}
                         />
                     </div>
-                    <FilterMenu
-                        courses={filteredCourses}
-                        optionStates={optionStates}
-                        updateOptionState={handleOptionStateUpdate}
-                    />
+                    <div className="flex gap-4 max-sm:gap-2">
+                        {view === "card" ? (
+                            <Table
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    setView("table");
+                                }}
+                            />
+                        ) : (
+                            <GalleryVertical
+                                className="cursor-pointer"
+                                onClick={() => setView("card")}
+                            />
+                        )}
+                        <FilterMenu
+                            courses={filteredCourses}
+                            optionStates={optionStates}
+                            updateOptionState={handleOptionStateUpdate}
+                        />
+                    </div>
                 </div>
                 <ScrollArea className="h-[calc(100vh-8rem)]">
                     {isLoading ? (
@@ -242,9 +308,12 @@ export default function Dashboard() {
                             <CourseCardSkeleton />
                             <CourseCardSkeleton />
                         </div>
+                    ) : view === "card" ? (
+                        <CardViewCourseList courses={filteredCourses} />
                     ) : (
-                        <CourseList courses={filteredCourses} />
+                        <TableViewCourseList courses={filteredCourses} />
                     )}
+                    <ScrollBar orientation="horizontal" />
                 </ScrollArea>
             </div>
         </div>
