@@ -1,7 +1,7 @@
 "use client";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { GalleryVertical, Search, Table } from "lucide-react";
+import { GalleryVertical, LoaderCircle, Search, Table } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import FilterMenu from "@/components/ui/dashboard/filter-menu";
 import {
@@ -24,7 +24,6 @@ import {
     getPrerequisiteCourses,
     getRequirementCatalogues,
 } from "@/lib/apis";
-import CourseCardSkeleton from "@/components/ui/dashboard/course-card-skeleton";
 import CardViewCourseList from "@/components/ui/dashboard/card-view-course-list";
 import TableViewCourseList from "@/components/ui/dashboard/table-view-course-list";
 
@@ -34,8 +33,12 @@ export default function Dashboard() {
     const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
-    const [optionGroups, setOptionGroups] = useState<{ [key: string]: string }>({});
-    const [optionStates, setOptionStates] = useState<{ [key: string]: boolean }>({});
+    const [optionGroups, setOptionGroups] = useState<{ [key: string]: string }>(
+        {}
+    );
+    const [optionStates, setOptionStates] = useState<{
+        [key: string]: boolean;
+    }>({});
     const [view, setView] = useState<"table" | "card">("table");
 
     function matchGroups(groups: string[], course: Course) {
@@ -273,6 +276,7 @@ export default function Dashboard() {
                     <div className="h-10 border rounded flex items-center focus-within:ring-1 focus-within:ring-ring px-4">
                         <Search />
                         <Input
+                            disabled={isLoading}
                             type="text"
                             placeholder="Search here..."
                             className="text-base border-none focus-visible:ring-0"
@@ -302,19 +306,18 @@ export default function Dashboard() {
                         />
                     </div>
                 </div>
-                <ScrollArea className="h-[calc(100vh-8rem)]">
-                    {isLoading ? (
-                        <div className="flex flex-col gap-4">
-                            <CourseCardSkeleton />
-                            <CourseCardSkeleton />
-                        </div>
-                    ) : view === "card" ? (
-                        <CardViewCourseList courses={filteredCourses} />
-                    ) : (
-                        <TableViewCourseList courses={filteredCourses} />
-                    )}
-                    <ScrollBar orientation="horizontal" />
-                </ScrollArea>
+                {isLoading ? (
+                    <LoaderCircle className="absolute inset-0 m-auto animate-spin" />
+                ) : (
+                    <ScrollArea className="h-[calc(100vh-8rem)]">
+                        {view === "card" ? (
+                            <CardViewCourseList courses={filteredCourses} />
+                        ) : (
+                            <TableViewCourseList courses={filteredCourses} />
+                        )}
+                        <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                )}
             </div>
         </div>
     );
