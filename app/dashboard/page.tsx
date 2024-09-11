@@ -119,66 +119,72 @@ export default function Dashboard() {
             }
         } else {
             newOptionStates = { ...optionStates, [option]: state };
-            switch (optionGroups[option] || "") {
-                case "Catalogue":
-                    if (state) {
-                        newFilteredCourses = filteredCourses.filter(
-                            (course) => course.catalogue === option
-                        );
-                    } else {
-                        newFilteredCourses = allCourses.filter(
-                            (course) =>
-                                optionStates[course.category] ||
-                                optionStates[course.group] ||
-                                optionStates[course.type]
-                        );
-                    }
-                    break;
-                case "Category":
-                    if (state) {
-                        newFilteredCourses = filteredCourses.filter(
-                            (course) => course.category === option
-                        );
-                    } else {
-                        newFilteredCourses = allCourses.filter(
-                            (course) =>
-                                optionStates[course.catalogue] ||
-                                optionStates[course.group] ||
-                                optionStates[course.type]
-                        );
-                    }
-                    break;
-                case "Group":
-                    if (state) {
-                        newFilteredCourses = filteredCourses.filter(
-                            (course) => course.group === option
-                        );
-                    } else {
-                        newFilteredCourses = allCourses.filter(
-                            (course) =>
-                                optionStates[course.catalogue] ||
-                                optionStates[course.category] ||
-                                optionStates[course.type]
-                        );
-                    }
-                    break;
-                case "Type":
-                    if (state) {
-                        newFilteredCourses = filteredCourses.filter(
-                            (course) => course.type === option
-                        );
-                    } else {
-                        newFilteredCourses = allCourses.filter(
-                            (course) =>
-                                optionStates[course.catalogue] ||
-                                optionStates[course.category] ||
-                                optionStates[course.group]
-                        );
-                    }
-                    break;
-                default:
-                    break;
+
+            if (Object.values(newOptionStates).every(st => !st)) {
+                newFilteredCourses = [...allCourses];
+            } else {
+                switch (optionGroups[option] || "") {
+                    case "Catalogue":
+                        if (state) {
+                            newFilteredCourses = filteredCourses.filter(
+                                (course) => course.catalogue === option
+                            );
+                        } else {
+                            newFilteredCourses = allCourses.filter(
+                                (course) =>
+                                    optionStates[course.category] ||
+                                    optionStates[course.group] ||
+                                    optionStates[course.type]
+                            );
+                        }
+                        break;
+                    case "Category":
+                        if (state) {
+                            newFilteredCourses = filteredCourses.filter(
+                                (course) => course.category === option
+                            );
+                        } else {
+                            newFilteredCourses = allCourses.filter(
+                                (course) =>
+                                    optionStates[course.catalogue] ||
+                                    optionStates[course.group] ||
+                                    optionStates[course.type]
+                            );
+                        }
+                        break;
+                    case "Group":
+                        if (state) {
+                            newFilteredCourses = filteredCourses.filter(
+                                (course) => course.group === option
+                            );
+                        } else {
+                            newFilteredCourses = allCourses.filter(
+                                (course) =>
+                                    optionStates[course.catalogue] ||
+                                    optionStates[course.category] ||
+                                    optionStates[course.type]
+                            );
+                        }
+                        break;
+                    case "Type":
+                        if (state) {
+                            newFilteredCourses = filteredCourses.filter(
+                                (course) => course.type === option
+                            );
+                        } else {
+                            newFilteredCourses = allCourses.filter(
+                                (course) =>
+                                    optionStates[course.catalogue] ||
+                                    optionStates[course.category] ||
+                                    optionStates[course.group]
+                            );
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
+
         }
 
         setOptionStates(newOptionStates);
