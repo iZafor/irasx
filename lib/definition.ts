@@ -198,3 +198,8 @@ export interface Course {
     category: string;
     type: string;
 }
+
+export type SessionPayload = {
+    studentId: string;
+    accessToken: string;
+}

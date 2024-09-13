@@ -7,17 +7,13 @@ import FilterMenu from "@/components/ui/dashboard/filter-menu";
 import {
     Course,
     CourseCataloguePrimitive,
-    STORED_AUTH_DATA_KEY,
 } from "@/lib/definition";
 import { useEffect, useState } from "react";
 import {
     cn,
     generateCourseArray,
-    getStoredAuthData,
     transformIntoPrerequisiteMap,
-    validateStoredAuthData,
 } from "@/lib/utils";
-import { redirect } from "next/navigation";
 import {
     getCourseCatalogue,
     getOfferedCourses,
@@ -192,18 +188,7 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
-        const authData = getStoredAuthData();
-        if (!validateStoredAuthData(authData)) {
-            redirect("/");
-        }
-
-        const logoutUser = setTimeout(() => {
-            localStorage.removeItem(STORED_AUTH_DATA_KEY);
-            redirect("/");
-        }, Date.parse(authData.expiry) - Date.now());
-
         async function fetchData() {
-            const { studentId, authToken } = authData;
             const [
                 offeredCourses,
                 foundationCatalogue,
@@ -212,12 +197,12 @@ export default function Dashboard() {
                 prerequisiteCourses,
                 requirementCatalogues,
             ] = await Promise.all([
-                getOfferedCourses(studentId, authToken),
-                getCourseCatalogue(studentId, authToken, "Foundation"),
-                getCourseCatalogue(studentId, authToken, "Major"),
-                getCourseCatalogue(studentId, authToken, "Minor"),
-                getPrerequisiteCourses(studentId, authToken),
-                getRequirementCatalogues(studentId, authToken),
+                getOfferedCourses(),
+                getCourseCatalogue("Foundation"),
+                getCourseCatalogue("Major"),
+                getCourseCatalogue("Minor"),
+                getPrerequisiteCourses(),
+                getRequirementCatalogues(),
             ]);
             const prerequisiteMap = transformIntoPrerequisiteMap(
                 prerequisiteCourses,
@@ -265,10 +250,6 @@ export default function Dashboard() {
         }
 
         fetchData();
-
-        return () => {
-            clearTimeout(logoutUser);
-        };
     }, []);
 
     return (
