@@ -1,9 +1,9 @@
 "use client";
 
-import { ThemeToggle } from "../theme-toggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 import { logoutUser } from "@/lib/actions";
 
 export default function Navbar() {
