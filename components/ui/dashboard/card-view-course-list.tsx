@@ -40,6 +40,7 @@ export default function CardViewCourseList({ courses }: { courses: Course[] }) {
         const start = Math.max(0, lastVisibleItemIndex - 4);
         const end = Math.min(courses.length, lastVisibleItemIndex + 6);
         setVisibleItems(courses.slice(start, end));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [lastVisibleItemIndex]);
 
     useEffect(() => {
