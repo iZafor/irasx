@@ -21,7 +21,7 @@ export async function decrypt(session: string | undefined = "") {
         });
         return { studentId, accessToken, valid: true };
     } catch (error) {
-        console.log("Failed to verify session");
+        console.error(error);
         return { valid: false };
     }
 }

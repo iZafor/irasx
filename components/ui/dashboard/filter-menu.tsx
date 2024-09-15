@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../button";
 import { Course } from "@/lib/definition";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TooltipWrapper } from "../tooltip";
 
 interface FilterMenuProps {
     courses: Course[];
@@ -23,6 +24,7 @@ interface FilterMenuProps {
 }
 
 export default function FilterMenu({ courses, optionStates, updateOptionState }: FilterMenuProps) {
+    const [open, setOpen] = useState(false);
     const [courseCatalogues, setCourseCatalogues] = useState<string[]>([]);
     const [courseGroups, setCourseGroups] = useState<string[]>([]);
     const [courseCategories, setCourseCategories] = useState<string[]>([]);
@@ -46,8 +48,12 @@ export default function FilterMenu({ courses, optionStates, updateOptionState }:
     }, [courses]);
 
     return (
-        <Sheet>
-            <SheetTrigger><Filter /></SheetTrigger>
+        <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+                <TooltipWrapper tooltipText="Filter">
+                    <Filter className="cursor-pointer" onClick={() => setOpen(true)} />
+                </TooltipWrapper>
+            </SheetTrigger>
             <SheetContent>
                 <ScrollArea className="mt-4 w-full h-[calc(100vh-4rem)]">
                     <div className="flex flex-col gap-8">

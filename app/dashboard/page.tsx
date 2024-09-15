@@ -4,10 +4,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { GalleryVertical, LoaderCircle, Search, Table } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import FilterMenu from "@/components/ui/dashboard/filter-menu";
-import {
-    Course,
-    CourseCataloguePrimitive,
-} from "@/lib/definition";
+import { Course, CourseCataloguePrimitive } from "@/lib/definition";
 import { useEffect, useState } from "react";
 import {
     cn,
@@ -22,6 +19,8 @@ import {
 } from "@/lib/apis";
 import CardViewCourseList from "@/components/ui/dashboard/card-view-course-list";
 import TableViewCourseList from "@/components/ui/dashboard/table-view-course-list";
+import Export from "@/components/ui/dashboard/export";
+import { TooltipWrapper } from "@/components/ui/tooltip";
 
 const allCourses: Course[] = [];
 
@@ -36,6 +35,13 @@ export default function Dashboard() {
         [key: string]: boolean;
     }>({});
     const [view, setView] = useState<"table" | "card">("table");
+
+    const [courseBasics, setCourseBasics] = useState<
+        { id: string; title: string }[]
+    >([]);
+    const [selectionMap, setSelectionMap] = useState<{
+        [key: string]: boolean;
+    }>({});
 
     function matchGroups(groups: string[], course: Course) {
         let res = false;
@@ -116,7 +122,7 @@ export default function Dashboard() {
         } else {
             newOptionStates = { ...optionStates, [option]: state };
 
-            if (Object.values(newOptionStates).every(st => !st)) {
+            if (Object.values(newOptionStates).every((st) => !st)) {
                 newFilteredCourses = [...allCourses];
             } else {
                 switch (optionGroups[option] || "") {
@@ -180,7 +186,6 @@ export default function Dashboard() {
                         break;
                 }
             }
-
         }
 
         setOptionStates(newOptionStates);
@@ -232,7 +237,11 @@ export default function Dashboard() {
             allCourses.push(...courses);
             const newOptionGroups: { [key: string]: string } = {};
             const newOptionStates: { [key: string]: boolean } = {};
-            courses.forEach((course) => {
+
+            const newCourseBasics: { id: string; title: string }[] = [];
+            const newSelectionMap: { [key: string]: boolean } = {};
+
+            for (const course of courses) {
                 newOptionStates[course.catalogue] = false;
                 newOptionStates[course.category] = false;
                 newOptionStates[course.group] = false;
@@ -242,17 +251,31 @@ export default function Dashboard() {
                 newOptionGroups[course.category] = "Category";
                 newOptionGroups[course.group] = "Group";
                 newOptionGroups[course.type] = "Type";
-            });
+
+                if (newSelectionMap[course.courseId] == undefined) {
+                    newCourseBasics.push({
+                        id: course.courseId,
+                        title: course.courseTitle,
+                    });
+                }
+                newSelectionMap[course.courseId] = false;
+            }
             setOptionStates(newOptionStates);
             setOptionGroups(newOptionGroups);
             setFilteredCourses(courses);
+
+            setCourseBasics(newCourseBasics);
+            setSelectionMap(newSelectionMap);
+
             setIsLoading(false);
         }
 
         fetchData();
     }, []);
 
-    return (
+    return isLoading ? (
+        <LoaderCircle className="absolute inset-0 m-auto animate-spin" />
+    ) : (
         <div className="w-full h-[calc(100vh-4rem)] flex justify-center">
             <div
                 className={cn(
@@ -264,7 +287,6 @@ export default function Dashboard() {
                     <div className="h-10 border rounded flex items-center focus-within:ring-1 focus-within:ring-ring px-4">
                         <Search />
                         <Input
-                            disabled={isLoading}
                             type="text"
                             placeholder="Search here..."
                             className="text-base border-none focus-visible:ring-0"
@@ -274,19 +296,32 @@ export default function Dashboard() {
                         />
                     </div>
                     <div className="flex gap-4 max-sm:gap-2">
-                        {view === "card" ? (
-                            <Table
-                                className="cursor-pointer"
-                                onClick={() => {
-                                    setView("table");
-                                }}
-                            />
-                        ) : (
-                            <GalleryVertical
+                        <Export
+                            allCourses={allCourses}
+                            courseBasics={courseBasics}
+                            selectionMap={selectionMap}
+                            updateSelection={(id) =>
+                                setSelectionMap((prev) => ({
+                                    ...prev,
+                                    [id]: !prev[id],
+                                }))
+                            }
+                        />
+                        <TooltipWrapper tooltipText="Change View">
+                            {view === "card" ? (
+                                <Table
+                                    className="cursor-pointer"
+                                    onClick={() => {
+                                        setView("table");
+                                    }}
+                                />
+                            ) : (
+                                <GalleryVertical
                                 className="cursor-pointer"
                                 onClick={() => setView("card")}
-                            />
-                        )}
+                                />
+                            )}
+                        </TooltipWrapper>
                         <FilterMenu
                             courses={filteredCourses}
                             optionStates={optionStates}
@@ -294,18 +329,14 @@ export default function Dashboard() {
                         />
                     </div>
                 </div>
-                {isLoading ? (
-                    <LoaderCircle className="absolute inset-0 m-auto animate-spin" />
-                ) : (
-                    <ScrollArea className="h-[calc(100vh-8rem)]">
-                        {view === "card" ? (
-                            <CardViewCourseList courses={filteredCourses} />
-                        ) : (
-                            <TableViewCourseList courses={filteredCourses} />
-                        )}
-                        <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
-                )}
+                <ScrollArea className="h-[calc(100vh-8rem)]">
+                    {view === "card" ? (
+                        <CardViewCourseList courses={filteredCourses} />
+                    ) : (
+                        <TableViewCourseList courses={filteredCourses} />
+                    )}
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
             </div>
         </div>
     );
