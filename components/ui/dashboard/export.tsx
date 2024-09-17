@@ -92,26 +92,28 @@ export default function Export({
                             Export as XLSX
                         </Button>
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                        {courseBasics
-                            .filter((course) => selectionMap[course.id])
-                            .map((course) => (
-                                <TooltipWrapper 
-                                    key={course.id}
-                                    tooltipText={course.title}
-                                >
-                                    <Button
-                                        variant="outline"
-                                        onClick={() =>
-                                            updateSelection(course.id)
-                                        }
+                    <ScrollArea>
+                        <div className="flex flex-wrap gap-1 max-h-[10rem] max-sm:max-h-[8rem]">
+                            {courseBasics
+                                .filter((course) => selectionMap[course.id])
+                                .map((course) => (
+                                    <TooltipWrapper 
+                                        key={course.id}
+                                        tooltipText={course.title}
                                     >
-                                        {course.id}{" "}
-                                        <X className="ml-2 size-4" />
-                                    </Button>
-                                </TooltipWrapper>
-                            ))}
-                    </div>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() =>
+                                                updateSelection(course.id)
+                                            }
+                                        >
+                                            {course.id}{" "}
+                                            <X className="ml-2 size-4" />
+                                        </Button>
+                                    </TooltipWrapper>
+                                ))}
+                        </div>
+                    </ScrollArea>
                     <Input
                         type="text"
                         placeholder="Search course..."
@@ -144,7 +146,7 @@ export default function Export({
                                         onClick={() =>
                                             updateSelection(course.id)
                                         }
-                                        className="flex justify-between items-center font-medium cursor-pointer hover:bg-muted p-2 rounded-md"
+                                        className="flex justify-between items-center font-medium cursor-pointer hover:bg-muted p-2 rounded-md border-b"
                                     >
                                         <p className="text-muted-foreground">
                                             {course.title}

@@ -24,7 +24,7 @@ export default function CardViewCourseList({ courses }: { courses: Course[] }) {
                     }
                 });
             },
-            { root: null, rootMargin: "0px", threshold: 0.9 }
+            { root: null, rootMargin: "0px", threshold: 0.5 }
         );
 
         observerRef.current = observer;
