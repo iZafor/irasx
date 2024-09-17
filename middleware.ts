@@ -12,12 +12,20 @@ export default async function middleware(req: NextRequest) {
     if (!cookie && !isProtectedRoute) {
         return NextResponse.next();
     }
+    if (!cookie && isProtectedRoute) {
+        return NextResponse.redirect(new URL("/", req.nextUrl));
+    }
 
     const { valid } = await decrypt(cookie);
-    if (valid && !isProtectedRoute) {
-        return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+    if (valid) {
+        if (!isProtectedRoute) {
+            return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+        } else {
+            return NextResponse.next();
+        }
     } else {
-        return NextResponse.next();
+        cookies().delete("session"); // delete invalid cookie to prevent further redirection
+        return NextResponse.redirect(new URL("/", req.nextUrl));
     }
 }
 
