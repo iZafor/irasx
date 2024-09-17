@@ -10,9 +10,18 @@ Major Dependencies -
 
 <hr>
 
-Some screenshots of the users interface -
-<img src="./public/login.png"/>
-<img src="./public/all-offered-courses.png"/>
+Some screenshots of the user interface - 
+##### Login Page -
+<img src="public/irasx-login.png"/>
+
+##### Dashboard (Table View) -
+<img src="public/irasx-dahboard-table-view.png"/>
+
+##### Dashboard (Card View) -
+<img src="public/irasx-dashboard-card-view.png"/>
+
+##### Exporting Course Details -
+<img src="public/irasx-export.png"/>
 
 <hr>
 
