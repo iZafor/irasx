@@ -13,6 +13,7 @@ import {
     OfferedCourse,
     Course,
     CourseCataloguePrimitive,
+    StudentCatalogue,
 } from "./definition";
 import { BinaryTree } from "./binary-tree";
 
@@ -242,4 +243,38 @@ export function generateCourseArray(
     }
 
     return res;
+}
+
+export function extractCreditCompletionData(catalogues: StudentCatalogue[]) {
+    const catalogueData: {[key: string]: { doneCredit: number, maxReq: number }} = {
+        "Foundation": { doneCredit: 0, maxReq: 0},
+        "Core": { doneCredit: 0, maxReq: 0},
+        "Major": { doneCredit: 0, maxReq: 0},
+        "Minor": { doneCredit: 0, maxReq: 0},
+        "Internship/Sr, Project": { doneCredit: 0, maxReq: 0},
+    };
+
+    for (const cat of catalogues) {
+        let group = "";
+
+        if (cat.courseGroupName.toLowerCase().includes("foundation")) {
+            group = "Foundation";
+        } else if (cat.courseGroupName.toLowerCase().includes("core")) {
+            group = "Core";
+        } else if (cat.courseGroupName.toLowerCase().includes("minor")) {
+            group = "Minor";
+        } else if (cat.courseGroupName.toLowerCase().includes("major")) {
+            group = "Major";
+        } else {
+            group = "Internship/Sr, Project";
+        }
+
+        const prev = catalogueData[group];
+        catalogueData[group] = {
+            doneCredit: prev.doneCredit + Number(cat.doneCredit),
+            maxReq: prev.maxReq + Number(cat.maxRequirment)
+        };
+    }
+
+    return catalogueData;
 }

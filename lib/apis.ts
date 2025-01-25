@@ -6,9 +6,59 @@ import {
     PrerequisiteCourse,
     CourseCatalogue,
     RequirementCatalogue,
+    StudentInfoResponse,
+    StudentCatalogue,
 } from "./definition";
 import { verifySession } from "./dal";
 import { formatTimeSlot } from "./utils";
+
+const defaultHeaders = (accessToken?: string) => ({
+    Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+    Referer: "http://www.irasv1.iub.edu.bd/",
+});
+
+export async function getStudentInfo(): Promise<
+    StudentInfoResponse | undefined
+> {
+    const { studentId, accessToken } = await verifySession();
+
+    try {
+        const res: StudentInfoResponse = await fetch(
+            `https://iras.iub.edu.bd:8079//api/v1/landing/notichboard/${studentId}/student`,
+            {
+                method: "GET",
+                headers: defaultHeaders(accessToken),
+            }
+        ).then((res) => res.json());
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+    return undefined;
+}
+
+export async function getStudentCatalogues(): Promise<StudentCatalogue[]> {
+    const { studentId, accessToken } = await verifySession();
+
+    try {
+        const { data }: { data: StudentCatalogue[]; total: number } =
+            await fetch(
+                `https://iras.iub.edu.bd:8079//api/v1/registration/student-catelogue-requirment/${studentId}`,
+                {
+                    method: "GET",
+                    headers: defaultHeaders(accessToken),
+                }
+            ).then((res) => res.json());
+        if (data) {
+            return data;
+        }
+        return [];
+    } catch (error) {
+        console.error(error);
+    }
+    return [];
+}
 
 export async function getGrades() {
     const { studentId, accessToken } = await verifySession();
@@ -18,11 +68,7 @@ export async function getGrades() {
             `https://iras.iub.edu.bd:8079//api/v1/registration/student-registered-courses/${studentId}/all`,
             {
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                    Referer: "http://www.irasv1.iub.edu.bd/",
-                },
+                headers: defaultHeaders(accessToken),
             }
         ).then((res) => res.json());
         return res;
@@ -43,11 +89,7 @@ export async function getOfferedCourses() {
             `https://iras.iub.edu.bd:8079//api/v1/registration/${studentId}/all-offer-courses`,
             {
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                    Referer: "http://www.irasv1.iub.edu.bd/",
-                },
+                headers: defaultHeaders(accessToken),
             }
         ).then((res) => res.json());
         return res.data.eligibleOfferCourses.map((course) => {
@@ -72,11 +114,7 @@ export async function getPrerequisiteCourses() {
             `https://iras.iub.edu.bd:8079//api/v1/registration/${studentId}/pre-requisite-courses`,
             {
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                    Referer: "http://www.irasv1.iub.edu.bd/",
-                },
+                headers: defaultHeaders(accessToken),
             }
         ).then((res) => res.json());
         return res.data;
@@ -88,17 +126,13 @@ export async function getPrerequisiteCourses() {
 
 export async function getCourseCatalogue(catalogue: string) {
     const { studentId, accessToken } = await verifySession();
-    
+
     try {
         const res: { data: CourseCatalogue[] } = await fetch(
             `https://iras.iub.edu.bd:8079//api/v1/common/catalouge-details/${studentId}/${catalogue}`,
             {
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                    Referer: "http://www.irasv1.iub.edu.bd/",
-                },
+                headers: defaultHeaders(accessToken),
             }
         ).then((res) => res.json());
         return res.data;
@@ -116,11 +150,7 @@ export async function getRequirementCatalogues() {
             `https://iras.iub.edu.bd:8079//api/v1/registration/student-catelogue-requirment/${studentId}`,
             {
                 method: "GET",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                    Referer: "http://www.irasv1.iub.edu.bd/",
-                },
+                headers: defaultHeaders(accessToken),
             }
         ).then((res) => res.json());
         return res.data;

@@ -202,4 +202,45 @@ export interface Course {
 export type SessionPayload = {
     studentId: string;
     accessToken: string;
+};
+
+export interface StudentInfo {
+    studentId: string;
+    studentName: string;
+    majorId: string;
+    major: string;
+    minor: string;
+    programId: string;
+    schoolId: string;
+    notificationMessages: string[];
+}
+
+export interface StudentInfoResponse {
+    data: StudentInfo;
+    message: string;
+    success: boolean;
+}
+
+export interface StudentCatalogue {
+    studentId: string;
+    admissionCode: string;
+    programId: string;
+    countS: string;
+    concentrationId: string;
+    creditEarned: string;
+    creditForGPA: string;
+    creditAttemted: string;
+    cgpa: string;
+    courseGroupName: string;
+    courseCatGroupName: string;
+    courseGroupId: string;
+    courseTypeName: string;
+    courseTypeId: string;
+    courseCatId: string;
+    doneCredit: string;
+    maxRequirment: string;
+    minRequirment: string;
+    approvedFinAid: string;
+    approvedFemaleAid: string;
+    advisorName: string;
 }
