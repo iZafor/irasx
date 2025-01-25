@@ -1,13 +1,13 @@
 "use server";
 
 import {
-    GradesResponse,
     OfferedCourse,
     PrerequisiteCourse,
     CourseCatalogue,
     RequirementCatalogue,
     StudentInfoResponse,
     StudentCatalogue,
+    RegisteredCourse,
 } from "./definition";
 import { verifySession } from "./dal";
 import { formatTimeSlot } from "./utils";
@@ -60,11 +60,11 @@ export async function getStudentCatalogues(): Promise<StudentCatalogue[]> {
     return [];
 }
 
-export async function getGrades() {
+export async function getRegisteredCourses() {
     const { studentId, accessToken } = await verifySession();
 
     try {
-        const res: GradesResponse = await fetch(
+        const res: { data: RegisteredCourse[]; total: number } = await fetch(
             `https://iras.iub.edu.bd:8079//api/v1/registration/student-registered-courses/${studentId}/all`,
             {
                 method: "GET",

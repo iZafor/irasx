@@ -2,9 +2,9 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
     StoredAuthData,
-    Result,
+    FormattedRegisteredCourses,
     SemesterOrder,
-    SemesterResult,
+    RegisteredCourse,
     STORED_AUTH_DATA_KEY,
     PrerequisiteCourse,
     PrerequisiteMap,
@@ -36,9 +36,26 @@ export function getStoredAuthData(): StoredAuthData {
     return JSON.parse(localStorage.getItem(STORED_AUTH_DATA_KEY) || "{}");
 }
 
-export function transformIntoResult(arr: SemesterResult[]) {
-    const tempResult: Result = { keys: [] };
+export function formatRegisteredCoursesPerYear(arr: RegisteredCourse[]) {
+    const tempResult: FormattedRegisteredCourses = { keys: [] };
     for (let i = 0; i < arr.length; i++) {
+        const course = arr[i];
+
+        arr[i].classCount =
+            null == course.classCount ? 0 : course.classCount - 1;
+        arr[i].wState =
+            6 == course.courseId.length
+                ? course.classCount - course.attend > 8
+                    ? 2
+                    : course.classCount - course.attend > 5
+                    ? 1
+                    : 0
+                : course.classCount - course.attend > 4
+                ? 2
+                : course.classCount - course.attend > 2
+                ? 1
+                : 0;
+
         const year = Number(arr[i].regYear);
         const sem = Number(arr[i].regSemester);
         if (!tempResult[year]) {
@@ -149,7 +166,7 @@ export function mapGradePoint(grade: string) {
 export function mapSemester(semester: string) {
     switch (semester) {
         case "1":
-            return "Winter";
+            return "Autumn";
         case "2":
             return "Spring";
         case "3":
@@ -246,12 +263,14 @@ export function generateCourseArray(
 }
 
 export function extractCreditCompletionData(catalogues: StudentCatalogue[]) {
-    const catalogueData: {[key: string]: { doneCredit: number, maxReq: number }} = {
-        "Foundation": { doneCredit: 0, maxReq: 0},
-        "Core": { doneCredit: 0, maxReq: 0},
-        "Major": { doneCredit: 0, maxReq: 0},
-        "Minor": { doneCredit: 0, maxReq: 0},
-        "Internship/Sr, Project": { doneCredit: 0, maxReq: 0},
+    const catalogueData: {
+        [key: string]: { doneCredit: number; maxReq: number };
+    } = {
+        Foundation: { doneCredit: 0, maxReq: 0 },
+        Core: { doneCredit: 0, maxReq: 0 },
+        Major: { doneCredit: 0, maxReq: 0 },
+        Minor: { doneCredit: 0, maxReq: 0 },
+        "Internship/Sr, Project": { doneCredit: 0, maxReq: 0 },
     };
 
     for (const cat of catalogues) {
@@ -272,7 +291,7 @@ export function extractCreditCompletionData(catalogues: StudentCatalogue[]) {
         const prev = catalogueData[group];
         catalogueData[group] = {
             doneCredit: prev.doneCredit + Number(cat.doneCredit),
-            maxReq: prev.maxReq + Number(cat.maxRequirment)
+            maxReq: prev.maxReq + Number(cat.maxRequirment),
         };
     }
 

@@ -48,7 +48,7 @@ export interface StoredAuthData {
     expiry: string;
 }
 
-export interface SemesterResult {
+export interface RegisteredCourse {
     courseId: string;
     courseName: string;
     section: number;
@@ -57,25 +57,21 @@ export interface SemesterResult {
     grade: string;
     classCount: number;
     attend: number;
+    wState?: number;
     wExpCount: number;
     roomId: string;
     classTime: string;
 }
 
-export interface Result {
+export interface FormattedRegisteredCourses {
     [key: number]: {
-        [key: number]: SemesterResult[];
+        [key: number]: RegisteredCourse[];
         keys: number[];
     };
     keys: number[];
 }
 
 export const SemesterOrder = [3, 1, 2];
-
-export interface GradesResponse {
-    data: SemesterResult[];
-    total: number;
-}
 
 export interface OfferedCourse {
     capacity: number;
