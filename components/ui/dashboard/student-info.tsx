@@ -15,7 +15,7 @@ export default async function StudentInfo({className}: {className?: string}) {
     return (
         <div className={cn("flex justify-between items-start max-sm:flex-col max-sm:gap-4", className)}>
             <div className="flex flex-col gap-2 max-sm:w-full">
-                <div className="flex gap-2 items-end">
+                <div className="flex gap-2 items-center">
                     <Avatar>
                         <AvatarImage
                             src={`https://iras.iub.edu.bd:8079/photo/${info?.data.studentId}.jpg`}

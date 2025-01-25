@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/table";
 import { columns } from "@/components/ui/dashboard/columns";
 import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "../card";
 
 export default function CourseList({ allCourses }: { allCourses: Course[] }) {
     const newOptionGroups: { [key: string]: string } = {};
@@ -200,96 +201,101 @@ export default function CourseList({ allCourses }: { allCourses: Course[] }) {
     }
 
     return (
-        <div className="space-y-4">
-            <div className="w-full flex gap-4 items-center justify-between">
-                <div className="h-10 border rounded flex items-center focus-within:ring-1 focus-within:ring-ring px-4">
-                    <Search />
-                    <Input
-                        type="text"
-                        placeholder="Search here..."
-                        className="text-base border-none focus-visible:ring-0"
-                        autoComplete="off"
-                        value={searchTerm}
-                        onChange={(ev) => handleSearch(ev.target.value)}
-                    />
+        <Card>
+            <CardHeader>
+                <CardTitle>OFFERED COURSES</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="w-full flex gap-4 items-center justify-between">
+                    <div className="h-10 border rounded flex items-center focus-within:ring-1 focus-within:ring-ring px-4">
+                        <Search />
+                        <Input
+                            type="text"
+                            placeholder="Search here..."
+                            className="text-base border-none focus-visible:ring-0"
+                            autoComplete="off"
+                            value={searchTerm}
+                            onChange={(ev) => handleSearch(ev.target.value)}
+                        />
+                    </div>
+                    <div className="flex gap-4 max-sm:gap-2">
+                        <Export
+                            allCourses={allCourses}
+                            courseBasics={courseBasics}
+                            selectionMap={selectionMap}
+                            updateSelection={(id) =>
+                                setSelectionMap((prev) => ({
+                                    ...prev,
+                                    [id]: !prev[id],
+                                }))
+                            }
+                        />
+                        <FilterMenu
+                            courses={filteredCourses}
+                            optionStates={optionStates}
+                            updateOptionState={handleOptionStateUpdate}
+                        />
+                    </div>
                 </div>
-                <div className="flex gap-4 max-sm:gap-2">
-                    <Export
-                        allCourses={allCourses}
-                        courseBasics={courseBasics}
-                        selectionMap={selectionMap}
-                        updateSelection={(id) =>
-                            setSelectionMap((prev) => ({
-                                ...prev,
-                                [id]: !prev[id],
-                            }))
-                        }
-                    />
-                    <FilterMenu
-                        courses={filteredCourses}
-                        optionStates={optionStates}
-                        updateOptionState={handleOptionStateUpdate}
-                    />
-                </div>
-            </div>
-            <ScrollArea
-                className={cn("h-[40rem]", {
-                    "h-[10rem]": filteredCourses.length === 0,
-                })}
-            >
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
-                                        </TableHead>
-                                    );
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={
-                                        row.getIsSelected() && "selected"
-                                    }
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </TableCell>
-                                    ))}
+                <ScrollArea
+                    className={cn("h-[40rem]", {
+                        "h-[10rem]": filteredCourses.length === 0,
+                    })}
+                >
+                    <Table>
+                        <TableHeader>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => {
+                                        return (
+                                            <TableHead key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                          header.column
+                                                              .columnDef.header,
+                                                          header.getContext()
+                                                      )}
+                                            </TableHead>
+                                        );
+                                    })}
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
-                                    No results.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-                <ScrollBar orientation="horizontal" />
-            </ScrollArea>
-        </div>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={
+                                            row.getIsSelected() && "selected"
+                                        }
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={columns.length}
+                                        className="h-24 text-center"
+                                    >
+                                        No results.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+            </CardContent>
+        </Card>
     );
 }
