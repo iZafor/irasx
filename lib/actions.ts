@@ -4,6 +4,10 @@ import { cookies } from "next/headers";
 import { LoginFormState, LoginFormSchema, AuthResponse } from "./definition";
 import { encrypt } from "./session";
 import { redirect } from "next/navigation";
+import CryptoJs from "crypto-js";
+
+const PASS_EN_KEY = CryptoJs.enc.Utf8.parse(process.env.PASS_ENCRYPTION_KEY!);
+const PASS_EN_IV = CryptoJs.enc.Utf8.parse(process.env.PASS_ENCRYPTION_IV!);
 
 export async function loginUser(state: LoginFormState, formData: FormData) {
     const authData = await LoginFormSchema.safeParseAsync({
@@ -16,7 +20,19 @@ export async function loginUser(state: LoginFormState, formData: FormData) {
         };
     }
 
+    const { email, password } = authData.data; 
+
     try {
+        const encryptedPass = CryptoJs.AES.encrypt(
+            CryptoJs.enc.Utf8.parse(password),
+            PASS_EN_KEY,
+            {
+                keySize: 16,
+                iv: PASS_EN_IV,
+                padding: CryptoJs.pad.Pkcs7
+            }
+        ).toString();
+
         const res: AuthResponse = await fetch(
             "https://iras.iub.edu.bd:8079//v3/account/token",
             {
@@ -25,7 +41,10 @@ export async function loginUser(state: LoginFormState, formData: FormData) {
                     "Content-Type": "application/json",
                     Referer: "http://www.irasv1.iub.edu.bd/",
                 },
-                body: JSON.stringify(authData.data),
+                body: JSON.stringify({
+                    email,
+                    password: encryptedPass
+                }),
             }
         ).then((res) => res.json());
 
