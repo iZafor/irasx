@@ -92,10 +92,10 @@ export async function getOfferedCourses() {
                 headers: defaultHeaders(accessToken),
             }
         ).then((res) => res.json());
-        return res.data.eligibleOfferCourses.map((course) => {
+        return res.data.eligibleOfferCourses?.map((course) => {
             course.timeSlot = formatTimeSlot(course.timeSlot);
             return course;
-        });
+        }) || [];
     } catch (error) {
         console.error(error);
     }

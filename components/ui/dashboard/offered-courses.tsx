@@ -30,15 +30,15 @@ export default async function OfferedCourses() {
     );
     const catalogues: CourseCataloguePrimitive[] = [
         {
-            catalogId: foundationCatalogue[0].catalogId,
+            catalogId: foundationCatalogue[0]?.catalogId,
             catalogName: "Foundation",
         },
         {
-            catalogId: majorCatalogue[0].catalogId,
+            catalogId: majorCatalogue[0]?.catalogId,
             catalogName: "Major",
         },
         {
-            catalogId: minorCatalogue[0].catalogId,
+            catalogId: minorCatalogue[0]?.catalogId,
             catalogName: "Minor",
         },
     ];
