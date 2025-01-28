@@ -1,11 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
-    StoredAuthData,
     FormattedRegisteredCourses,
     SemesterOrder,
     RegisteredCourse,
-    STORED_AUTH_DATA_KEY,
     PrerequisiteCourse,
     PrerequisiteMap,
     RequirementCatalogue,
@@ -21,26 +19,16 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function validateStoredAuthData(authData: StoredAuthData) {
-    return (
-        authData.authToken &&
-        authData.expiry &&
-        Date.parse(authData.expiry || new Date().toUTCString()) > Date.now()
-    );
-}
-
-export function getStoredAuthData(): StoredAuthData {
-    if (typeof localStorage === "undefined") {
-        return JSON.parse("{}");
-    }
-    return JSON.parse(localStorage.getItem(STORED_AUTH_DATA_KEY) || "{}");
-}
-
 export function formatRegisteredCoursesPerYear(arr: RegisteredCourse[]) {
     const tempResult: FormattedRegisteredCourses = { keys: [] };
     for (let i = 0; i < arr.length; i++) {
         const course = arr[i];
-
+        arr[i].classTime = formatTimeSlot(
+            course.classTime
+                .replace(":", "?")
+                .replaceAll(":", "")
+                .replace("?", ": ")
+        );
         arr[i].classCount =
             null == course.classCount ? 0 : course.classCount - 1;
         arr[i].wState =
@@ -196,28 +184,34 @@ export function mapDay(day: string) {
 }
 
 export function formatTimeSlot(timeStr: string) {
-    const [days, duration] = timeStr.split(" ");
-    const times = duration.split("-");
-    const startHour = Number(times[0].substring(0, 2));
-    const endHour = Number(times[1].substring(0, 2));
-
-    times[0] =
-        startHour < 13
-            ? `${startHour}:${times[0].substring(2)}`
-            : `${startHour - 12}:${times[0].substring(2)}`;
-    times[1] =
-        endHour < 13
-            ? `${endHour}:${times[1].substring(2)}`
-            : `${endHour - 12}:${times[1].substring(2)}`;
-
-    times[0] += startHour < 12 ? "AM" : "PM";
-    times[1] += endHour < 12 ? "AM" : "PM";
-
-    return `${days
-        .substring(0, days.length - 1)
-        .split("")
-        .map(mapDay)
-        .join(", ")} ${times.join("-")}`;
+    try {        
+        const [days, duration] = timeStr.split(" ");
+        const times = duration.split("-");
+        const startHour = Number(times[0].substring(0, 2));
+        const endHour = Number(times[1].substring(0, 2));
+    
+        times[0] =
+            startHour < 13
+                ? `${startHour}:${times[0].substring(2)}`
+                : `${startHour - 12}:${times[0].substring(2)}`;
+        times[1] =
+            endHour < 13
+                ? `${endHour}:${times[1].substring(2)}`
+                : `${endHour - 12}:${times[1].substring(2)}`;
+    
+        times[0] += startHour < 12 ? "AM" : "PM";
+        times[1] += endHour < 12 ? "AM" : "PM";
+    
+        return `${days
+            .substring(0, days.length - 1)
+            .split("")
+            .map(mapDay)
+            .join(", ")} ${times.join("-")}`;
+    }catch (error) {
+        console.log({timeStr});
+        console.error(error);
+        return timeStr;
+    }
 }
 
 export function generateCourseArray(
@@ -296,4 +290,25 @@ export function extractCreditCompletionData(catalogues: StudentCatalogue[]) {
     }
 
     return catalogueData;
+}
+
+export function calculateGPA(courses: RegisteredCourse[] | OfferedCourse[]) {
+    let totalGrade = 0.0;
+    let totalCreditHour = 0;
+
+    if (!courses) {
+        return "0.00";
+    }
+
+    for (const course of courses) {
+        if (course.grade.charAt(0) === "E" || course.grade.charCodeAt(0) > "F".charCodeAt(0)) {
+            continue;
+        }
+
+        const creditHour = course.courseId.at(-1) === "L" ? 1 : 3;
+        totalGrade += creditHour * mapGradePoint(course.grade);
+        totalCreditHour += creditHour;
+    }
+
+    return ((totalGrade / totalCreditHour) || 0).toFixed(2);
 }

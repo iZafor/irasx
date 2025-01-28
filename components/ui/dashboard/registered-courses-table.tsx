@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import ComboBox from "@/components/ui/combo-box";
-import { cn, mapSemester } from "@/lib/utils";
-import { ScrollArea, ScrollBar } from "../scroll-area";
+import { calculateGPA, cn, mapSemester } from "@/lib/utils";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export default function RegisteredCoursesTable({
     registeredCourses,
@@ -37,21 +37,32 @@ export default function RegisteredCoursesTable({
     const [year, setYear] = useState(defaultYear);
     const [semester, setSemester] = useState(defaultSemester);
 
+    const courses = registeredCourses[year as keyof FormattedRegisteredCourses][
+        semester as number
+    ] as RegisteredCourse[];
+    const gpa = calculateGPA(courses);
+
     return (
         <div className="space-y-4 w-full">
-            <div className="flex gap-4">
-                <ComboBox
-                    values={yearComboBoxData}
-                    value={year!}
-                    onChange={(value) => setYear(value as number)}
-                    name="year"
-                />
-                <ComboBox
-                    values={semesterComboBoxdata}
-                    value={semester!}
-                    onChange={(value) => setSemester(value as number)}
-                    name="semester"
-                />
+            <div className="flex justify-between max-sm:flex-col max-sm:gap-4">
+                <div className="flex gap-4">
+                    <ComboBox
+                        values={yearComboBoxData}
+                        value={year!}
+                        onChange={(value) => setYear(value as number)}
+                        name="year"
+                    />
+                    <ComboBox
+                        values={semesterComboBoxdata}
+                        value={semester!}
+                        onChange={(value) => setSemester(value as number)}
+                        name="semester"
+                    />
+                </div>
+                <div className="flex gap-2 text-sm max-sm:self-center">
+                    <p className="font-semibold text-muted-foreground">GPA:</p>
+                    <p>{gpa}</p>
+                </div>
             </div>
             <ScrollArea className="w-full">
                 <Table className="min-w-[1000px]">
@@ -67,11 +78,7 @@ export default function RegisteredCoursesTable({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {(
-                            registeredCourses[
-                                year as keyof FormattedRegisteredCourses
-                            ][semester as number] as RegisteredCourse[]
-                        )?.map((course) => (
+                        {courses?.map((course) => (
                             <TableRow key={course.courseId}>
                                 <TableCell className="w-[6rem]">
                                     {course.courseId}
