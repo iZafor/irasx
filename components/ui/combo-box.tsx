@@ -19,21 +19,23 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 
-interface ComboBoxProps {
-    values: { value: string | number; label: string }[];
-    value: string | number;
-    onChange: (value: string | number) => void;
+interface ComboBoxProps<T> {
+    values: { value: T; label: string }[];
+    value: T;
+    onChange: (value: T) => void;
     name?: string;
     className?: string;
+    isSelected?: (value: T) => boolean; // use this for multiple selection
 }
 
-export default function ComboBox({
+export default function ComboBox<T>({
     value,
     onChange,
     values,
     name,
     className,
-}: ComboBoxProps) {
+    isSelected,
+}: ComboBoxProps<T>) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -43,7 +45,7 @@ export default function ComboBox({
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className="w-full justify-between"
                 >
                     {value
                         ? values.find((item) => item.value === value)?.label
@@ -51,7 +53,10 @@ export default function ComboBox({
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className={cn("w-[200px] p-0", className)}>
+            <PopoverContent
+                className={cn("w-full p-0", className)}
+                align="start"
+            >
                 <Command>
                     <CommandInput placeholder={`Search ${name}...`} />
                     <CommandList>
@@ -59,7 +64,7 @@ export default function ComboBox({
                         <CommandGroup>
                             {values.map((item) => (
                                 <CommandItem
-                                    key={item.value}
+                                    key={item.label}
                                     value={item.label}
                                     onSelect={() => {
                                         onChange(item.value);
@@ -69,7 +74,11 @@ export default function ComboBox({
                                     <Check
                                         className={cn(
                                             "mr-2 h-4 w-4",
-                                            value === item.value
+                                            (
+                                                isSelected
+                                                    ? isSelected(item.value)
+                                                    : value === item.value
+                                            )
                                                 ? "opacity-100"
                                                 : "opacity-0"
                                         )}
