@@ -1,4 +1,5 @@
 import { Course } from "@/lib/definition";
+import { getFormattedTimeSlot } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Course>[] = [
@@ -20,7 +21,15 @@ export const columns: ColumnDef<Course>[] = [
         accessorKey: "timeSlot",
         header: "Time Slot",
         cell: (cell) => (
-            <div className="w-[10rem]">{cell.getValue() as string}</div>
+            <div className="w-[10rem]">
+                {getFormattedTimeSlot(
+                    cell.getValue() as {
+                        days: string[];
+                        hours: number[];
+                        minutes: number[];
+                    }
+                )}
+            </div>
         ),
     },
     {

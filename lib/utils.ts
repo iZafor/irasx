@@ -183,6 +183,15 @@ export function mapDay(day: string) {
     }
 }
 
+export function getFormattedHour(hour: number, minute: number) {
+    let fHour = hour < 13
+                ? `${hour}:${minute}`
+                : `${hour - 12}:${minute}`;
+    fHour += hour < 12 ? "AM" : "PM";
+
+    return fHour;
+}
+
 export function formatTimeSlot(timeStr: string) {
     try {        
         const [days, duration] = timeStr.split(" ");
@@ -214,6 +223,36 @@ export function formatTimeSlot(timeStr: string) {
     }
 }
 
+export function configureTimeSlot(timeSlot: string) {
+    try {
+        const [days, duration] = timeSlot.split(" ");
+        const times = duration.split("-");
+        const startHour = Number(times[0].substring(0, 2));
+        const endHour = Number(times[1].substring(0, 2));
+        const startMinute = Number(times[0].substring(2));
+        const endMinute = Number(times[1].substring(2));
+        
+        return {
+            days: days.substring(0, days.length - 1).split(""),
+            hours: [ startHour, endHour ],
+            minutes: [ startMinute, endMinute ]
+        };
+    } catch (error) {
+        console.log({timeSlot});
+        console.error(error);
+
+        return {
+            days: [],
+            hours: [],
+            minutes: [],
+        };
+    }
+}
+
+export function getFormattedTimeSlot(timeSlot: { days: string[], hours: number[], minutes: number[] }) {
+    return timeSlot.days.map(mapDay).join(", ") + " " + timeSlot.hours.map((h, i) => getFormattedHour(h, timeSlot.minutes[i])).join("-");
+}
+
 export function generateCourseArray(
     offeredCourses: OfferedCourse[],
     requirementCatalogues: RequirementCatalogue[],
@@ -227,7 +266,7 @@ export function generateCourseArray(
             courseTitle: course.courseName,
             section: course.section,
             faculty: course.facualtyName,
-            timeSlot: course.timeSlot,
+            timeSlot: configureTimeSlot(course.timeSlot),
             vacancy: `${course.vacancy}/${course.capacity}`,
             enrolled: course.enrolled,
             prerequisites:

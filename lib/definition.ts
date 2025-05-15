@@ -183,7 +183,7 @@ export interface Course {
     courseTitle: string;
     section: number;
     faculty: string;
-    timeSlot: string;
+    timeSlot: { days: string[], hours: number[], minutes: number[] };
     vacancy: string;
     enrolled: number;
     prerequisites: { courseId: string; status: boolean }[];

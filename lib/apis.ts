@@ -10,7 +10,6 @@ import {
     RegisteredCourse,
 } from "./definition";
 import { verifySession } from "./dal";
-import { formatTimeSlot } from "./utils";
 
 const defaultHeaders = (accessToken?: string) => ({
     Authorization: `Bearer ${accessToken}`,
@@ -92,12 +91,7 @@ export async function getOfferedCourses() {
                 headers: defaultHeaders(accessToken),
             }
         ).then((res) => res.json());
-        return (
-            res.data.eligibleOfferCourses?.map((course) => {
-                course.timeSlot = formatTimeSlot(course.timeSlot);
-                return course;
-            }) || []
-        );
+        return res.data.eligibleOfferCourses ?? [];
     } catch (error) {
         console.error(error);
     }
