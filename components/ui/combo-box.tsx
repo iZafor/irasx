@@ -21,17 +21,19 @@ import { useState } from "react";
 
 interface ComboBoxProps<T> {
     values: { value: T; label: string }[];
-    value: T;
     onChange: (value: T) => void;
+    value?: T;
+    selectedValues?: T[]; // use this for multiple selection
     name?: string;
     className?: string;
     isSelected?: (value: T) => boolean; // use this for multiple selection
 }
 
 export default function ComboBox<T>({
-    value,
-    onChange,
     values,
+    onChange,
+    value,
+    selectedValues,
     name,
     className,
     isSelected,
@@ -49,6 +51,16 @@ export default function ComboBox<T>({
                 >
                     {value
                         ? values.find((item) => item.value === value)?.label
+                        : selectedValues && selectedValues.length !== 0
+                        ? (selectedValues.length < 3
+                            ? selectedValues
+                                  .map(
+                                      (v) =>
+                                          values.find((i) => i.value === v)
+                                              ?.label
+                                  )
+                                  .join(", ")
+                            : `Selected ${selectedValues.length} ${name}`)
                         : `Select ${name}...`}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>

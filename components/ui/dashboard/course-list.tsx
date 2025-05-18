@@ -27,7 +27,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "../card";
 export default function CourseList({ allCourses }: { allCourses: Course[] }) {
     const newOptionGroups: { [key: string]: string } = {};
     const newOptionStates: { [key: string]: boolean } = {};
-    const newCourseBasics: { id: string; title: string }[] = [];
     const newSelectionMap: { [key: string]: boolean } = {};
 
     for (const course of allCourses) {
@@ -41,12 +40,6 @@ export default function CourseList({ allCourses }: { allCourses: Course[] }) {
         newOptionGroups[course.group] = "Group";
         newOptionGroups[course.type] = "Type";
 
-        if (newSelectionMap[course.courseId] == undefined) {
-            newCourseBasics.push({
-                id: course.courseId,
-                title: course.courseTitle,
-            });
-        }
         newSelectionMap[course.courseId] = false;
     }
 
@@ -54,7 +47,6 @@ export default function CourseList({ allCourses }: { allCourses: Course[] }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [optionGroups] = useState(newOptionGroups);
     const [optionStates, setOptionStates] = useState(newOptionStates);
-    const [courseBasics] = useState(newCourseBasics);
     const [selectionMap, setSelectionMap] = useState(newSelectionMap);
 
     const table = useReactTable({
@@ -221,7 +213,6 @@ export default function CourseList({ allCourses }: { allCourses: Course[] }) {
                     <div className="flex gap-4 max-sm:gap-2">
                         <Export
                             allCourses={allCourses}
-                            courseBasics={courseBasics}
                             selectionMap={selectionMap}
                             updateSelection={(id) =>
                                 setSelectionMap((prev) => ({

@@ -7,7 +7,7 @@ import { Zap, X } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../button";
-import { ClassTiming, Course } from "@/lib/definition";
+import { Course } from "@/lib/definition";
 import ComboBox from "@/components/ui/combo-box";
 
 function downloadFile(response: Response, filename: string) {
@@ -55,7 +55,7 @@ export default function Planner({
     const [day, setDay] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
-    const timings: { [key: string]: ClassTiming } = {};
+    // const timings: { [key: string]: ClassTiming } = {};
 
     async function exportAs(format: "pdf" | "xlsx") {
         setIsExporting(true);
@@ -126,7 +126,7 @@ export default function Planner({
                         <Input placeholder="Start Time" type="time" />
                         <Input placeholder="End Time" type="time" />
                     </div>
-                    <Button
+                    {/* <Button
                         className="w-full"
                         onClick={() => {
                             if (day) {
@@ -141,7 +141,7 @@ export default function Planner({
                         }}
                     >
                         ADD
-                    </Button>
+                    </Button> */}
                     <ScrollArea>
                         <div className="flex flex-wrap gap-1 max-h-[10rem] max-sm:max-h-[8rem]">
                             {courseBasics

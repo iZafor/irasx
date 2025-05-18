@@ -2,13 +2,14 @@
 
 import { TooltipWrapper } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowDownToLine, X } from "lucide-react";
-import { useState } from "react";
+import { ArrowDownToLine, Check } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "../button";
 import { Course } from "@/lib/definition";
 import { Sheet, SheetContent, SheetTrigger } from "../sheet";
 import ComboBox from "../combo-box";
+import { cn } from "@/lib/utils";
 
 function downloadFile(response: Response, filename: string) {
     return response.blob().then((blob) => {
@@ -24,64 +25,103 @@ function downloadFile(response: Response, filename: string) {
 }
 
 const days = [
-    { value: "Sunday", label: "Sunday" },
-    { value: "Monday", label: "Monday" },
-    { value: "Tuesday", label: "Tuesday" },
-    { value: "Wednesday", label: "Wednesday" },
-    { value: "Thursday", label: "Thursday" },
-    { value: "Friday", label: "Friday" },
-    { value: "Saturday", label: "Saturday" },
+    { value: "S", label: "Sunday" },
+    { value: "M", label: "Monday" },
+    { value: "T", label: "Tuesday" },
+    { value: "W", label: "Wednesday" },
+    { value: "R", label: "Thursday" },
+    { value: "F", label: "Friday" },
+    { value: "A", label: "Saturday" },
 ];
 
 interface ExportProps {
     allCourses: Course[];
-    courseBasics: {
-        id: string;
-        title: string;
-    }[];
     selectionMap: { [key: string]: boolean };
     updateSelection: (courseId: string) => void;
 }
 
 export default function Export({
     allCourses,
-    courseBasics,
     selectionMap,
     updateSelection,
 }: ExportProps) {
     const [open, setOpen] = useState(false);
-    const [filteredCourses, setFilteredCourses] = useState(courseBasics);
+    const [searchValue, setSearchValue] = useState("");
+    const [filteredCourses, setFilteredCourses] = useState<{ id: string; title: string }[]>([]);
     const [isExporting, setIsExporting] = useState(false);
-    const [day, setDay] = useState("");
     const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const [timeRanges, setTimeRanges] = useState<{
+        [key: string]: { start: string; end: string };
+    }>({});
 
-    const selectedCourses = courseBasics.filter(
-        (course) => selectionMap[course.id]
-    );
+    useEffect(() => {
+        const allFilteredCourses = allCourses.filter((course) => {
+            if (searchValue) {
+                const searchLower = searchValue.toLowerCase();
+                const courseId = course.courseId.toLowerCase();
+                const courseTitle = course.courseTitle.toLowerCase();
 
-    function handleDaySelection(value: string) {
-        let newSelectedDays = undefined;
-
-        if (selectedDays.includes(value)) {
-            newSelectedDays = selectedDays.filter((day) => day !== value);
-            setDay(newSelectedDays.length > 0 ? newSelectedDays[0] : "");
-            setSelectedDays(newSelectedDays);
-        } else {
-            newSelectedDays = [...selectedDays, value];
-            setDay(value);
-            setSelectedDays(newSelectedDays);
-        }
-
-        // TODO: show only the courses that matches the selected days
-        if (newSelectedDays.length > 0) {
-            setFilteredCourses(
-                courseBasics.filter(cb => {
-                    const timeSlot = allCourses.find(c => c.courseId === cb.id)!.timeSlot;
+                if (!courseId.includes(searchLower) && !courseTitle.includes(searchLower)) {
                     return false;
-                })
-            )
+                }
+            }
+
+            if (selectedDays.length === 0) {
+                return true;
+            }
+
+            let timingMatched = true;
+            if (selectedDays.some((day) => course.timeSlot.days.includes(day))) {
+                for (const day of selectedDays) {
+                    if (!course.timeSlot.days.includes(day)) {
+                        continue;
+                    }
+
+                    const start = timeRanges[day]?.start;
+                    const end = timeRanges[day]?.end;
+
+                    if (start && end) {
+                        const [startHour, startMinute] = start.split(":").map(Number);
+                        const [endHour, endMinute] = end.split(":").map(Number);
+
+                        timingMatched =
+                            course.timeSlot.hours[0] >= startHour &&
+                            (course.timeSlot.hours[0] > startHour || course.timeSlot.minutes[0] >= startMinute) &&
+                            course.timeSlot.hours[1] <= endHour &&
+                            (course.timeSlot.hours[1] < endHour || course.timeSlot.minutes[1] <= endMinute);
+                    } else if (start) {
+                        const [startHour, startMinute] = start.split(":").map(Number);
+
+                        timingMatched =
+                            course.timeSlot.hours[0] >= startHour &&
+                            (course.timeSlot.hours[0] > startHour || course.timeSlot.minutes[0] >= startMinute);
+                    } else if (end) {
+                        const [endHour, endMinute] = end.split(":").map(Number);
+
+                        timingMatched =
+                            course.timeSlot.hours[1] <= endHour &&
+                            (course.timeSlot.hours[1] < endHour || course.timeSlot.minutes[1] <= endMinute);
+                    } else {
+                        timingMatched = true;
+                    }
+                }
+            } else {
+                timingMatched = false;
+            }
+
+            return timingMatched;
+        });
+
+        const addStatus: { [key: string]: boolean } = {};
+        const newFilteredCourses: { id: string; title: string }[] = [];
+        for (const course of allFilteredCourses) {
+            if (!addStatus[course.courseId]) {
+                addStatus[course.courseId] = true;
+                newFilteredCourses.push({ id: course.courseId, title: course.courseTitle });
+            } 
         }
-    }
+        setFilteredCourses(newFilteredCourses);
+    }, [allCourses, searchValue, selectedDays, timeRanges]);
 
     async function exportAs(format: "pdf" | "xlsx") {
         setIsExporting(true);
@@ -92,9 +132,56 @@ export default function Export({
             {
                 method: "POST",
                 body: JSON.stringify({
-                    data: allCourses.filter(
-                        (course) => selectionMap[course.courseId]
-                    ),
+                    data: allCourses.filter((course) => {
+                        if (!selectionMap[course.courseId]) {
+                            return false;
+                        }
+
+                        if (selectedDays.length === 0) {
+                            return true;
+                        }
+
+                        let timingMatched = true;
+                        if (selectedDays.some((day) => course.timeSlot.days.includes(day))) {
+                            for (const day of selectedDays) {
+                                if (!course.timeSlot.days.includes(day)) {
+                                    continue;
+                                }
+
+                                const start = timeRanges[day]?.start;
+                                const end = timeRanges[day]?.end;
+
+                                if (start && end) {
+                                    const [startHour, startMinute] = start.split(":").map(Number);
+                                    const [endHour, endMinute] = end.split(":").map(Number);
+
+                                    timingMatched =
+                                        course.timeSlot.hours[0] >= startHour &&
+                                        (course.timeSlot.hours[0] > startHour || course.timeSlot.minutes[0] >= startMinute) &&
+                                        course.timeSlot.hours[1] <= endHour &&
+                                        (course.timeSlot.hours[1] < endHour || course.timeSlot.minutes[1] <= endMinute);
+                                } else if (start) {
+                                    const [startHour, startMinute] = start.split(":").map(Number);
+
+                                    timingMatched =
+                                        course.timeSlot.hours[0] >= startHour &&
+                                        (course.timeSlot.hours[0] > startHour || course.timeSlot.minutes[0] >= startMinute);
+                                } else if (end) {
+                                    const [endHour, endMinute] = end.split(":").map(Number);
+
+                                    timingMatched =
+                                        course.timeSlot.hours[1] <= endHour &&
+                                        (course.timeSlot.hours[1] < endHour || course.timeSlot.minutes[1] <= endMinute);
+                                } else {
+                                    timingMatched = true;
+                                }
+                            }
+                        } else {
+                            timingMatched = false;
+                        }
+
+                        return timingMatched;
+                    }),
                 }),
             }
         );
@@ -119,79 +206,137 @@ export default function Export({
                 </TooltipWrapper>
             </SheetTrigger>
             <SheetContent>
-                <ScrollArea className="w-full h-[calc(100dvh-4rem)]">
-                    <div className="space-y-4 mt-8 px-1">
+                <ScrollArea className="w-full h-[100dvh]">
+                    <div className="space-y-2 mt-8 px-1">
                         <ComboBox
-                            value={day}
                             values={days}
-                            onChange={handleDaySelection}
-                            name="Day"
+                            selectedValues={selectedDays}
+                            onChange={(day) =>
+                                setSelectedDays((prev) =>
+                                    prev.includes(day)
+                                        ? prev.filter((d) => d !== day)
+                                        : [...prev, day]
+                                )
+                            }
+                            name="Days"
                             className="pointer-events-auto"
                             isSelected={(value) => selectedDays.includes(value)}
                         />
-                        {selectedCourses.length > 0 && (
-                            <div className="flex flex-wrap gap-1">
-                                {selectedCourses.map((course) => (
-                                    <TooltipWrapper
-                                        key={course.id}
-                                        tooltipText={course.title}
-                                    >
-                                        <Button
-                                            variant="outline"
-                                            onClick={() =>
-                                                updateSelection(course.id)
-                                            }
+
+                        {selectedDays.length > 0 && (
+                            <ScrollArea>
+                                <div className="space-y-3 max-h-[13rem]">
+                                    {selectedDays.map((day) => (
+                                        <div
+                                            key={day}
+                                            className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50"
                                         >
-                                            {course.id}{" "}
-                                            <X className="ml-2 size-4" />
-                                        </Button>
-                                    </TooltipWrapper>
-                                ))}
-                            </div>
+                                            <p className="font-medium">
+                                                {
+                                                    days.find(
+                                                        (d) => d.value === day
+                                                    )?.label
+                                                }
+                                            </p>
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    type="time"
+                                                    className="flex-1"
+                                                    value={
+                                                        timeRanges[day]
+                                                            ?.start || ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        setTimeRanges((prev) => ({
+                                                            ...prev,
+                                                            [day]: {
+                                                                ...prev[day],
+                                                                start: e.target.value,
+                                                            },
+                                                        }))
+                                                    }
+                                                />
+                                                <span className="text-sm text-muted-foreground">
+                                                    to
+                                                </span>
+                                                <Input
+                                                    type="time"
+                                                    className="flex-1"
+                                                    value={
+                                                        timeRanges[day]?.end ||
+                                                        ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        setTimeRanges((prev) => ({
+                                                            ...prev,
+                                                            [day]: {
+                                                                ...prev[day],
+                                                                end: e.target.value,
+                                                            },
+                                                        }))
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </ScrollArea>
                         )}
+
                         <Input
                             type="text"
                             placeholder="Search course..."
                             className="font-medium"
-                            onChange={(ev) =>
-                                setTimeout(() => {
-                                    const val = ev.target.value.toLowerCase();
-                                    setFilteredCourses(
-                                        courseBasics.filter(
-                                            (course) =>
-                                                course.id
-                                                    .toLowerCase()
-                                                    .includes(val) ||
-                                                course.title
-                                                    .toLowerCase()
-                                                    .includes(val)
-                                        )
-                                    );
-                                }, 100)
-                            }
+                            value={searchValue}
+                            onChange={(ev) => setSearchValue(ev.target.value)}
                         />
-                        <ScrollArea className="h-[calc(100dvh-20rem)]">
-                            <div className="space-y-4">
-                                {filteredCourses.map((course) =>
-                                    selectionMap[course.id] ? (
-                                        <></>
-                                    ) : (
-                                        <div
-                                            key={course.id}
-                                            onClick={() =>
-                                                updateSelection(course.id)
+
+                        <ScrollArea
+                            className={cn(
+                                "h-[calc(100dvh-16rem)]",
+                                {
+                                    [`h-[calc(100dvh-22rem)]`]:
+                                        selectedDays.length === 1,
+                                },
+                                {
+                                    [`h-[calc(100dvh-29rem)]`]:
+                                        selectedDays.length >= 2,
+                                }
+                            )}
+                        >
+                            <div className="space-y-2">
+                                {filteredCourses.map((course) => (
+                                    <div
+                                        key={course.id}
+                                        onClick={() =>
+                                            updateSelection(course.id)
+                                        }
+                                        className={cn(
+                                            "flex items-center gap-2 text-sm font-medium cursor-pointer p-2 rounded-md border-b",
+                                            {
+                                                "hover:bg-muted":
+                                                    !selectionMap[course.id],
+                                            },
+                                            {
+                                                "bg-muted border":
+                                                    selectionMap[course.id],
                                             }
-                                            className="flex justify-between items-center text-sm font-medium cursor-pointer hover:bg-muted p-2 rounded-md border-b"
-                                        >
+                                        )}
+                                    >
+                                        {selectionMap[course.id] && (
+                                            <Check className="size-4" />
+                                        )}
+                                        <div className="w-full space-y-1">
                                             <p className="text-muted-foreground">
-                                                {course.title}
+                                                {course.id}
                                             </p>
-                                            <p>{course.id}</p>
+                                            <p>{course.title}</p>
                                         </div>
-                                    )
-                                )}
+                                    </div>
+                                ))}
                             </div>
                         </ScrollArea>
+
                         <Button
                             disabled={true}
                             className="w-full"
@@ -200,7 +345,10 @@ export default function Export({
                             Export as PDF
                         </Button>
                         <Button
-                            disabled={isExporting}
+                            disabled={
+                                isExporting ||
+                                Object.values(selectionMap).every((v) => !v)
+                            }
                             className="w-full"
                             onClick={async () => await exportAs("xlsx")}
                         >

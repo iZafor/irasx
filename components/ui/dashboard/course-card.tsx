@@ -1,6 +1,7 @@
 import { CardHeader, CardContent, Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Course } from "@/lib/definition";
+import { getFormattedTimeSlot } from "@/lib/utils";
 
 export default function CourseCard({ course }: { course: Course; }) {
     return (
@@ -22,7 +23,7 @@ export default function CourseCard({ course }: { course: Course; }) {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                         <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Time Slot</div>
-                        <div>{course.timeSlot}</div>
+                        <div>{getFormattedTimeSlot(course.timeSlot)}</div>
                     </div>
                     <div className="space-y-1">
                         <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Vacancy</div>

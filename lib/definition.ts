@@ -178,12 +178,18 @@ export const CatalogueGroupMap: { [key: string]: string } = {
     minor: "Minor",
 };
 
+export interface CourseTiming {
+    days: string[];
+    hours: number[];
+    minutes: number[];
+}
+
 export interface Course {
     courseId: string;
     courseTitle: string;
     section: number;
     faculty: string;
-    timeSlot: { days: string[], hours: number[], minutes: number[] };
+    timeSlot: CourseTiming;
     vacancy: string;
     enrolled: number;
     prerequisites: { courseId: string; status: boolean }[];

@@ -2,6 +2,7 @@ import { verifySession } from "@/lib/dal";
 import { NextRequest, NextResponse } from "next/server";
 import { Course } from "@/lib/definition";
 import { Workbook } from "exceljs";
+import { getFormattedTimeSlot } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
     await verifySession();
@@ -41,9 +42,11 @@ export async function POST(req: NextRequest) {
 
     for (let i = 0; i < data.length; i++) {
         const course = data[i];
+        const formattedTime = getFormattedTimeSlot(course.timeSlot);
 
         const row = worksheet.addRow({
             ...course,
+            timeSlot: formattedTime,
             prerequisites: course.prerequisites
                 .map((pre) => pre.courseId)
                 .join(", "),
