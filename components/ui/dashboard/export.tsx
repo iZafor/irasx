@@ -229,7 +229,7 @@ export default function Export({
                                     {selectedDays.map((day) => (
                                         <div
                                             key={day}
-                                            className="flex flex-col gap-2 p-3 rounded-lg bg-muted/50"
+                                            className="text-sm flex flex-col gap-2 p-3 rounded-md bg-muted/50"
                                         >
                                             <p className="font-medium">
                                                 {
@@ -238,7 +238,7 @@ export default function Export({
                                                     )?.label
                                                 }
                                             </p>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2 max-sm:flex-col">
                                                 <Input
                                                     type="time"
                                                     className="flex-1"
@@ -295,7 +295,7 @@ export default function Export({
                             className={cn(
                                 "h-[calc(100dvh-16rem)]",
                                 {
-                                    [`h-[calc(100dvh-22rem)]`]:
+                                    [`h-[calc(100dvh-22rem)] max-sm:h-[calc(100dvh-26rem)]`]:
                                         selectedDays.length === 1,
                                 },
                                 {
