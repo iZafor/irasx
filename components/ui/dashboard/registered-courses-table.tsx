@@ -59,7 +59,7 @@ export default function RegisteredCoursesTable({
                         name="semester"
                     />
                 </div>
-                <div className="flex items-center max-sm:self-center gap-2 px-4 py-2 rounded-md border backdrop-blur-sm">
+                <div className="flex items-center max-sm:self-center gap-2 px-4 py-1 rounded-md border backdrop-blur-sm">
                     <div className="text-sm font-medium text-muted-foreground">
                         GPA
                     </div>

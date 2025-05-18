@@ -44,13 +44,13 @@ export default async function StudentInfo({className}: {className?: string}) {
                         <CardTitle>RESULT</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <span className="flex gap-2 text-xl">
-                            <p className="font-semibold text-muted-foreground">CGPA:</p>
-                            <p>{cgpa}</p>
+                        <span className="flex gap-2 items-center">
+                            <p className="text-sm font-medium text-muted-foreground">CGPA</p>
+                            <p className="font-bold text-foreground">{cgpa}</p>
                         </span>
-                        <span className="flex gap-2 text-sm">
-                            <p className="font-semibold text-muted-foreground">Credit Earned:</p>
-                            <p>{creditEarned}</p>
+                        <span className="flex gap-2 items-center">
+                            <p className="text-sm font-medium text-muted-foreground">Credit Earned</p>
+                            <p className="font-bold text-foreground">{creditEarned}</p>
                         </span>
                     </CardContent>
                 </Card>
@@ -62,9 +62,9 @@ export default async function StudentInfo({className}: {className?: string}) {
                     <CardContent className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                         {
                             Object.keys(catalogueData).map((key, idx) => (
-                                <span key={key} className={cn("flex gap-2", {"col-span-2": idx === 4})}>
-                                    <p className="font-semibold text-muted-foreground">{key}:</p>
-                                    <p>{catalogueData[key].doneCredit}/{catalogueData[key].maxReq}</p>
+                                <span key={key} className={cn("flex gap-2 items-center", {"col-span-2": idx === 4})}>
+                                    <p className="text-sm font-medium text-muted-foreground">{key}</p>
+                                    <p className="font-bold text-foreground">{catalogueData[key].doneCredit}/{catalogueData[key].maxReq}</p>
                                 </span>
                             ))
                         }
