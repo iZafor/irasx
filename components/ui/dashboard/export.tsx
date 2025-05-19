@@ -10,6 +10,7 @@ import { Course } from "@/lib/definition";
 import { Sheet, SheetContent, SheetTrigger } from "../sheet";
 import ComboBox from "../combo-box";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "../checkbox";
 
 function downloadFile(response: Response, filename: string) {
     return response.blob().then((blob) => {
@@ -38,12 +39,14 @@ interface ExportProps {
     allCourses: Course[];
     selectionMap: { [key: string]: boolean };
     updateSelection: (courseId: string) => void;
+    toggleSelectAll: () => void;
 }
 
 export default function Export({
     allCourses,
     selectionMap,
     updateSelection,
+    toggleSelectAll,
 }: ExportProps) {
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState("");
@@ -283,13 +286,16 @@ export default function Export({
                             </ScrollArea>
                         )}
 
-                        <Input
-                            type="text"
-                            placeholder="Search course..."
-                            className="font-medium"
-                            value={searchValue}
-                            onChange={(ev) => setSearchValue(ev.target.value)}
-                        />
+                        <div className="flex items-center gap-2">
+                            <Checkbox checked={!Object.values(selectionMap).some((v) => v === false)} onClick={toggleSelectAll} />
+                            <Input
+                                type="text"
+                                placeholder="Search course..."
+                                className="font-medium"
+                                value={searchValue}
+                                onChange={(ev) => setSearchValue(ev.target.value)}
+                            />
+                        </div>
 
                         <ScrollArea
                             className={cn(

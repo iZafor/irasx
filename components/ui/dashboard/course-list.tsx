@@ -220,6 +220,18 @@ export default function CourseList({ allCourses }: { allCourses: Course[] }) {
                                     [id]: !prev[id],
                                 }))
                             }
+                            toggleSelectAll={() => {
+                                const state = Object.values(selectionMap).some(v => v === false);
+                                setSelectionMap((prev) => {
+                                    const newSelectionMap = { ...prev };
+                                    Object.keys(newSelectionMap).forEach(
+                                        (key) => {
+                                            newSelectionMap[key] = state;
+                                        }
+                                    );
+                                    return newSelectionMap;
+                                });
+                            }}
                         />
                         <FilterMenu
                             courses={filteredCourses}
